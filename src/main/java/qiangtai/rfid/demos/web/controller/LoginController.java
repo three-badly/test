@@ -3,11 +3,11 @@ package qiangtai.rfid.demos.web.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import qiangtai.rfid.demos.web.dto.LoginVO;
 import qiangtai.rfid.demos.web.dto.UserResultVO;
-import qiangtai.rfid.demos.web.entity.User;
 import qiangtai.rfid.demos.web.service.LoginService;
 
 /**
@@ -25,9 +25,8 @@ public class LoginController {
 
     @GetMapping("/login")
     @Operation(summary = "登录")
-    public UserResultVO login(@Validated LoginVO user) {
-        loginService.login(user);
-        return null;
+    public UserResultVO login(@Validated @ParameterObject LoginVO user) {
+        return loginService.login(user);
     }
     @GetMapping("/register")
     @Operation(summary = "注册")

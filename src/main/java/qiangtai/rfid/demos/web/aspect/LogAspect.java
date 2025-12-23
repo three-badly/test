@@ -31,8 +31,7 @@ public class LogAspect {
     /**
      * 定义一个切点
      */
-    // 定义一个切点
-    @Pointcut("execution(* qiangtai.rfid.demos.web..*.*(..))")
+    @Pointcut("execution(* qiangtai.rfid.demos.web.controller..*.*(..))")
     public void controllerPointcut() {
         // 切点签名方法，不需要实现
     }
