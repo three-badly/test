@@ -1,0 +1,15 @@
+app:
+  security:
+    enable: false
+    anon-uris: /v2/api-docs-ext,/actuator/**,/swagger-ui.html,/webjars/**,/swagger-resources/**,/v2/api-docs/**,/call/service/api
+    access-key-id: ${ACCESS_KEY:DJPE3QJ07OXPAFFJGORO}
+    access-key-secret: ${ACCESS_KEY_SECRET:sFjISWRruGQjJLCZYiEwomqEpBCNiE3HBaYixZFl}
+    # 日志记录配置
+    logging:
+      # 是否启用详细的认证失败日志
+      enable-detailed-log: true
+      # 是否记录用户代理信息
+      log-user-agent: true
+      # 是否记录客户端IP地址
+      log-client-ip: true
+

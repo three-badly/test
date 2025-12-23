@@ -1,0 +1,25 @@
+server:
+  port: 8084
+
+knife4j:
+  enable: true
+  openapi:
+    title: RFID门禁接口文档
+    version: v1.0
+  group:
+    default:
+      group-name: 默认分组
+      api-rule: package
+      api-rule-resources:
+        - qiangtai.rfid.demos.web.controller   # ← 你的控制器包
+spring:
+  application:
+    name: rfid
+  config:
+    import:
+      - classpath:config/security.yml
+  datasource:
+    url: jdbc:mysql://${MYSQL_URL:localhost:3306}/fgl_access_log?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8&useSSL=false
+
+    username: ${MYSQL_USER:root}
+    password: ${MYSQL_PASSWORD:root}
