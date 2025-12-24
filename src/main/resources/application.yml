@@ -11,7 +11,8 @@ knife4j:
       group-name: 默认分组
       api-rule: package
       api-rule-resources:
-        - qiangtai.rfid.demos.web.controller   # ← 你的控制器包
+        - qiangtai.rfid.controller   # 实际控制器包
+
 spring:
   application:
     name: rfid
@@ -20,6 +21,11 @@ spring:
       - classpath:config/security.yml
   datasource:
     url: jdbc:mysql://${MYSQL_URL:localhost:3306}/fgl_access_log?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8&useSSL=false
-
     username: ${MYSQL_USER:root}
     password: ${MYSQL_PASSWORD:root}
+
+# 打开 MyBatis SQL 日志
+logging:
+  level:
+    qiangtai.rfid.mapper: debug
+    org.mybatis: debug
