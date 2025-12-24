@@ -1,0 +1,55 @@
+package qiangtai.rfid.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import qiangtai.rfid.dto.req.DepartmentQuery;
+import qiangtai.rfid.dto.req.DevicesQueryVO;
+import qiangtai.rfid.dto.result.DevicesSaveVO;
+import qiangtai.rfid.dto.result.Result;
+import qiangtai.rfid.service.DepartmentsService;
+import qiangtai.rfid.service.DevicesService;
+
+import javax.validation.Valid;
+
+@RequestMapping("/department")
+@RestController
+@RequiredArgsConstructor
+@Validated
+@Tag(name = "部门接口")
+public class DepartmentController {
+
+    private final DepartmentsService departmentsService;
+
+    @GetMapping("/pageDepartment")
+    @Operation(summary = "设备多,分页查看部门")
+    public Result<?> pageDepartment(@Valid DepartmentQuery departmentQuery) {
+        return Result.success(departmentsService.pageDepartment(departmentQuery));
+    }
+
+/*    @GetMapping("/pageDevice")
+    @Operation(summary = "设备多,分页查看设备")
+    public Result<?> pageDevice(@Valid DevicesQueryVO devicesQueryVO) {
+        return Result.success(devicesService.pageDevice(devicesQueryVO));
+    }
+
+    @PostMapping("/add")
+    @Operation(summary = "新增设备")
+    public Result<?> add(@Valid  @RequestBody DevicesSaveVO devicesSaveVO) {
+        return Result.success(devicesService.add(devicesSaveVO));
+    }
+
+    @GetMapping("/listDevice")
+    @Operation(summary = "设备少,列表查看设备")
+    public Result<?> listDevice() {
+        return Result.success(devicesService.listDevice());
+    }
+
+    @DeleteMapping("/{id}")
+    @Operation(summary = "删除设备")
+    public Result<?> deleteDevice(@PathVariable Integer id) {
+        return Result.success(devicesService.deleteDevice(id));
+    }*/
+}

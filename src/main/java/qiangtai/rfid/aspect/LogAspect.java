@@ -31,7 +31,7 @@ public class LogAspect {
     /**
      * 定义一个切点
      */
-    @Pointcut("execution(* qiangtai.rfid.demos.web.controller..*.*(..))")
+    @Pointcut("execution(* qiangtai.rfid.controller..*.*(..))")
     public void controllerPointcut() {
         // 切点签名方法，不需要实现
     }
@@ -99,21 +99,8 @@ public class LogAspect {
         Object result = proceedingJoinPoint.proceed();
 
         // 排除字段，敏感字段或太长的字段不显示：身份证、手机号、邮箱、密码等
-        String[] excludeProperties = {};
-        // 使用Spring Boot默认的Jackson ObjectMapper替代fastjson
-        try {
-            ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            // 创建过滤器排除特定属性
-            if (excludeProperties.length > 0) {
-                SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept(excludeProperties);
-                FilterProvider filters = new SimpleFilterProvider().addFilter("propertyFilter", filter);
-                objectMapper.setFilterProvider(filters);
-            }
-            LOG.info("返回结果: {}", objectMapper.writeValueAsString(result));
-        } catch (Exception e) {
-            LOG.error("返回结果序列化失败: ", e);
-        }
+
+
         LOG.info("------------- 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
         return result;
     }

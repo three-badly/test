@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import qiangtai.rfid.dto.req.CompanyQuery;
 import qiangtai.rfid.dto.req.CompanySaveVO;
 import qiangtai.rfid.dto.rsp.CompanyResultVO;
-import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.entity.Company;
 
 import javax.validation.Valid;

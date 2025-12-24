@@ -1,6 +1,5 @@
 package qiangtai.rfid.service.impl;
 
-import cn.hutool.core.bean.BeanException;
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -12,7 +11,6 @@ import org.springframework.stereotype.Service;
 import qiangtai.rfid.dto.req.CompanyQuery;
 import qiangtai.rfid.dto.req.CompanySaveVO;
 import qiangtai.rfid.dto.rsp.CompanyResultVO;
-import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.entity.Company;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.mapper.CompanyMapper;
