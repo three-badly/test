@@ -3,8 +3,6 @@ package qiangtai.rfid.dto.rsp;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
-import java.time.LocalDateTime;
-
 @Data
 public class UserResultVO {
     /**
@@ -16,13 +14,12 @@ public class UserResultVO {
     /**
      * 身份[0- 1-]
      */
-    private String identity;
+    private String role;
 
     /**
      * 用户名
      */
     private String username;
-
 
 
     /**

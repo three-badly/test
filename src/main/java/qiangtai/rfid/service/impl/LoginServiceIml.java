@@ -61,7 +61,15 @@ public class LoginServiceIml implements LoginService {
 
         UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
         userResultVO.setToken(token);
-        Company company = companyMapper.selectOne(Wrappers.<Company>lambdaQuery().eq(Company::getId, userResultVO.getCompanyId()));
+        Company company = new Company();
+        company.setCompanyName("平台管理员");
+        if (userResultVO.getCompanyId() != -1){
+            company = companyMapper.selectOne(Wrappers.<Company>lambdaQuery().eq(Company::getId, userResultVO.getCompanyId()));
+            if (company == null){
+                throw new BusinessException(10008, "公司不存在");
+            }
+        }
+
         userResultVO.setCompanyName(company.getCompanyName());
         return userResultVO;
     }
