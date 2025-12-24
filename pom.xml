@@ -43,7 +43,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
-        <!-- 简化 POJO -->
+        <!-- MyBatis-Plus 扩展插件（内含 PaginationInnerInterceptor） -->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-jsqlparser-4.9</artifactId>
+        </dependency>        <!-- 简化 POJO -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
@@ -62,12 +66,6 @@
             <!-- 版本由 BOM 统一管理，这里省略 -->
         </dependency>
 
-        <!-- 如果确实需要 jsqlparser，使用带版本号的独立坐标 -->
-        <dependency>
-            <groupId>com.github.jsqlparser</groupId>
-            <artifactId>jsqlparser</artifactId>
-            <version>4.6</version>
-        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>
