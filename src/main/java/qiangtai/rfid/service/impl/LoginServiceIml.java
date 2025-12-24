@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import qiangtai.rfid.constant.Constant;
+import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.LoginVO;
 
 import qiangtai.rfid.dto.req.UserSaveVO;
@@ -51,8 +52,8 @@ public class LoginServiceIml implements LoginService {
         Map<String, Object> map = new HashMap<String, Object>() {
             private static final long serialVersionUID = 1L;
             {
-                put("id", user.getId());
-                put("companyId", user.getCompanyId());
+                put(Constant.TOKEN_USER_ID, user.getId());
+                put(Constant.TOKEN_COMPANY_ID, user.getCompanyId());
                 put("expire_time", System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15);
             }
         };

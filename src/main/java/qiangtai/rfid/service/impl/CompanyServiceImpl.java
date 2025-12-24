@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.CompanyQuery;
 import qiangtai.rfid.dto.req.CompanySaveVO;
 import qiangtai.rfid.dto.rsp.CompanyResultVO;
@@ -29,6 +30,8 @@ public class CompanyServiceImpl  implements CompanyService {
     @Override
     public List<Company> getCompanyList() {
         log.info("获取公司列表");
+        log.error(UserContext.get().getUserId());
+        log.error(UserContext.get().getCompanyId());
         return companyMapper.selectList(Wrappers.emptyWrapper());
     }
     
