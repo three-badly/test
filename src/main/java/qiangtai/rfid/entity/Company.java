@@ -27,7 +27,7 @@ public class Company {
     /**
      * 公司名称
      */
-    private String name;
+    private String companyName;
     
     /**
      * 办公地址
@@ -37,7 +37,7 @@ public class Company {
     /**
      * 联系电话
      */
-    private String contact;
+    private String phone;
     
     /**
      * 创建时间

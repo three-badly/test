@@ -1,20 +1,20 @@
-package qiangtai.rfid.entity;
+package qiangtai.rfid.dto.result;
 
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import java.io.Serializable;
+
 import java.util.Date;
 import lombok.Data;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 /**
  * 门禁设备表
  * @TableName devices
  */
-@TableName(value ="devices")
 @Data
-public class Devices implements Serializable {
+public class DevicesSaveVO {
     /**
      * 设备序列号/编号
      */
@@ -24,16 +24,19 @@ public class Devices implements Serializable {
     /**
      * 设备名称 (如: 1号门进站口)
      */
+    @NotEmpty(message = "设备名称不能为空")
     private String name;
 
     /**
      * 所属公司ID
      */
+    @NotNull(message = "所属公司ID不能为空")
     private Integer companyId;
 
     /**
      * 安装位置
      */
+    @NotEmpty(message = "安装位置不能为空")
     private String location;
 
     /**
@@ -46,6 +49,5 @@ public class Devices implements Serializable {
      */
     private Date lastHeartbeat;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+
 }

@@ -7,6 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import qiangtai.rfid.dto.LoginVO;
 
+import qiangtai.rfid.dto.req.UserSaveVO;
 import qiangtai.rfid.dto.rsp.UserNameInfo;
 import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.service.LoginService;
@@ -31,16 +32,11 @@ public class LoginController {
     public UserResultVO login(@Valid @RequestBody LoginVO user) {
         return loginService.login(user);
     }
-    @GetMapping("/register")
-    @Operation(summary = "注册")
-    public UserResultVO register(@Validated LoginVO user) {
 
-        return loginService.register(user);
-    }
     @PostMapping("/addUser")
     @Operation(summary = "添加公司用户")
-    public UserNameInfo addUser(String companyId) {
-        return loginService.addUser(companyId);
+    public UserNameInfo addUser(@Valid @RequestBody UserSaveVO userSaveVO) {
+        return loginService.addUser(userSaveVO);
 
     }
 }

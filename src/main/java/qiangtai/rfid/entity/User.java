@@ -39,23 +39,17 @@ public class User {
     /**
      * 身份[0- 1-]
      */
-    private String identity;
+    private String role;
 
     /**
      * 用户名
      */
     private String username;
 
-
-
     /**
      * 公司id
      */
-    private String companyId;
-
-
-
-
+    private Integer companyId;
     /**
      * 密码
      */

@@ -7,7 +7,7 @@ public class UserNameInfo {
     /**
      * 公司名称
      */
-    private String name;
+    private String companyName;
 
     /**
      * 用户名
@@ -19,5 +19,6 @@ public class UserNameInfo {
      * 密码
      */
     private String password;
+    private Integer companyId;
 
 }

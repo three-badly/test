@@ -28,7 +28,7 @@ public class UserResultVO {
     /**
      * 公司id
      */
-    private String companyId;
+    private Integer companyId;
     private String token;
     private String companyName;
 

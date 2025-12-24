@@ -1,7 +1,6 @@
 package qiangtai.rfid.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.RandomUtil;
 import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import qiangtai.rfid.constant.Constant;
 import qiangtai.rfid.dto.LoginVO;
 
+import qiangtai.rfid.dto.req.UserSaveVO;
 import qiangtai.rfid.dto.rsp.UserNameInfo;
 import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.entity.Company;
@@ -23,7 +23,6 @@ import qiangtai.rfid.utils.DigestUtil;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,49 +61,37 @@ public class LoginServiceIml implements LoginService {
 
         UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
         userResultVO.setToken(token);
-        if (!Objects.equals(user.getCompanyId(), "-1")){
-            Company company = companyMapper.selectOne(Wrappers.<Company>lambdaQuery().eq(Company::getId, userResultVO.getCompanyId()));
-            userResultVO.setCompanyName(company.getName());
-        }else {
-            userResultVO.setCompanyName("平台管理员");
-        }
+        Company company = companyMapper.selectOne(Wrappers.<Company>lambdaQuery().eq(Company::getId, userResultVO.getCompanyId()));
+        userResultVO.setCompanyName(company.getCompanyName());
         return userResultVO;
     }
 
     @Override
-    public UserResultVO register(LoginVO user) {
-        return null;
-    }
-
-    @Override
-    public UserNameInfo addUser(String companyId) {
+    public UserNameInfo addUser(UserSaveVO userSaveVO) {
+        if (userSaveVO.getCompanyId() == -1 || userSaveVO.getUsername().equals(Constant.ROOT_NAME)){
+            throw new BusinessException(10008, "名字不可为"+Constant.ROOT_NAME);
+        }
         //校验companyId是否存在
         Company company = companyMapper.selectOne(Wrappers.<Company>lambdaQuery()
-                .eq(Company::getId, companyId)
+                .eq(Company::getId, userSaveVO.getCompanyId())
         );
         if (company == null){
             throw new BusinessException(10008, "公司不存在");
         }
         //校验是否多个账户（需求是否需要）todo
-        //随机生成6位数字符串账号和6位数的密码
         List<String> list = loginMapper.selectList(Wrappers.<User>lambdaQuery())
                 .stream()
                 .map(User::getUsername)
                 .collect(Collectors.toList());
-        //查看是否账号名重复，重复则重新生成
-        String s ;
-        do {
-            s = RandomUtil.randomString(6);
-        }while (list.contains(s));
-        User user = new User();
-        user.setUsername(s);
-        String password = RandomUtil.randomString(6);
-        user.setPassword(DigestUtil.get(password));
-        user.setCompanyId(companyId);
+        //查看是否账号名重复
+        if (list.contains(userSaveVO.getUsername())){
+            throw new BusinessException(10008, "用户名已存在");
+        }
+        User user = BeanUtil.copyProperties(userSaveVO, User.class);
+        user.setPassword(DigestUtil.get(userSaveVO.getPassword()));
         loginMapper.insert(user);
-        user.setPassword(password);
-        UserNameInfo userNameInfo = BeanUtil.copyProperties(user, UserNameInfo.class);
-        userNameInfo.setName(company.getName());
+        UserNameInfo userNameInfo = BeanUtil.copyProperties(userSaveVO, UserNameInfo.class);
+        userNameInfo.setCompanyName(company.getCompanyName());
         return userNameInfo;
     }
 }

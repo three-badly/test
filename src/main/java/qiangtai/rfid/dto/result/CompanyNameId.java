@@ -13,5 +13,5 @@ public class CompanyNameId {
     /**
      * 公司名称
      */
-    private String name;
+    private String companyName;
 }
