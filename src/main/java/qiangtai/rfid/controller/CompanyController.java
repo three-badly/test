@@ -40,12 +40,7 @@ public class CompanyController {
         return Result.success(companies);
     }
 
-    @GetMapping("/{id}")
-    @Operation(summary = "根据ID获取公司信息")
-    public Result<?> getCompanyById(@PathVariable Integer id) {
-        Company company = companyService.getCompanyById(id);
-        return Result.success(company);
-    }
+
 
     @PostMapping("/add")
     @Operation(summary = "新增公司")
@@ -57,7 +52,6 @@ public class CompanyController {
     @PutMapping("/update")
     @Operation(summary = "更新公司信息")
     public Result<?> updateCompany(@RequestBody Company company) {
-
         return Result.success(companyService.updateCompany(company));
     }
 

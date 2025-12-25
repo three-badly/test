@@ -30,22 +30,13 @@ public class CompanyServiceImpl  implements CompanyService {
     
     @Override
     public List<Company> getCompanyList() {
-        log.info("获取公司列表");
-
         return companyMapper.selectList(Wrappers.emptyWrapper());
-    }
-    
-    @Override
-    public Company getCompanyById(Integer id) {
-        log.info("根据ID获取公司信息: {}", id);
-        return companyMapper.selectById(id);
     }
     
     @Override
     public Boolean createCompany(CompanySaveVO companySaveVO) {
         //校验参数
-        List<Company> companies = companyMapper.selectList(Wrappers.lambdaQuery()
-        );
+        List<Company> companies = companyMapper.selectList(Wrappers.lambdaQuery());
         List<String> companyNames = companies.stream().map(Company::getCompanyName).collect(Collectors.toList());
         boolean contains = companyNames.contains(companySaveVO.getCompanyName());
         if (contains) {
@@ -58,6 +49,12 @@ public class CompanyServiceImpl  implements CompanyService {
     @Override
     public Boolean updateCompany(Company company) {
         //校验参数
+        List<Company> companies = companyMapper.selectList(Wrappers.<Company>lambdaQuery().ne(Company::getId, company.getId()));
+        List<String> companyNames = companies.stream().map(Company::getCompanyName).collect(Collectors.toList());
+        boolean contains = companyNames.contains(company.getCompanyName());
+        if (contains) {
+            throw new BusinessException(10010,"公司名称已存在");
+        }
 
         int result = companyMapper.updateById(company);
         return result > 0;

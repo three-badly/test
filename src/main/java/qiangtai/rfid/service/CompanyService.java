@@ -17,14 +17,7 @@ public interface CompanyService {
      * @return 公司列表
      */
     List<Company> getCompanyList();
-    
-    /**
-     * 根据ID获取公司信息
-     * @param id 公司ID
-     * @return 公司信息
-     */
-    Company getCompanyById(Integer id);
-    
+
     /**
      * 创建公司
      *
