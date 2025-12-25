@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="qiangtai.rfid.mapper.EmployeesMapper">
+
+    <resultMap id="BaseResultMap" type="qiangtai.rfid.entity.Employees">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="departmentId" column="department_id" jdbcType="INTEGER"/>
+            <result property="companyId" column="company_id" jdbcType="INTEGER"/>
+            <result property="hireDate" column="hire_date" jdbcType="DATE"/>
+            <result property="employeeType" column="employee_type" jdbcType="VARCHAR"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
+            <result property="companyName" column="company_name" jdbcType="VARCHAR"/>
+            <result property="departmentName" column="department_name" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,phone_number,name,department_id,company_name,department_name,company_id,hire_date,
+        employee_type,status,create_time
+    </sql>
+</mapper>
