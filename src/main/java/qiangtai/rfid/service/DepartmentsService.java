@@ -21,4 +21,6 @@ public interface DepartmentsService extends IService<Departments> {
     Boolean add(DepartmentsSaveVO departmentsSaveVO);
 
     Boolean removeDepartById(Integer id);
+
+    Boolean updateDepartments(Departments departments1);
 }

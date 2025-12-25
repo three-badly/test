@@ -18,11 +18,6 @@ public class DepartmentsUpdateVO {
     private String departmentName;
 
     /**
-     * 所属公司ID
-     */
-    private Integer companyId;
-
-    /**
      * 部门编码
      */
     private String deptCode;

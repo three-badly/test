@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DepartmentQuery;
 import qiangtai.rfid.dto.req.DepartmentsSaveVO;
 import qiangtai.rfid.dto.req.DepartmentsUpdateVO;
@@ -43,7 +44,8 @@ public class DepartmentsController {
     @Operation(summary = "更新部门")
     public Result<?> updateDepartments(@Valid @RequestBody DepartmentsUpdateVO departments) {
         Departments departments1 = BeanUtil.copyProperties(departments, Departments.class);
-        return Result.success(departmentsService.updateById(departments1));
+
+        return Result.success(departmentsService.updateDepartments(departments1));
     }
     @DeleteMapping("/{id}")
     @Operation(summary = "删除部门")
