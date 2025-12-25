@@ -29,6 +29,9 @@ public class DepartmentsServiceImpl extends ServiceImpl<DepartmentsMapper, Depar
         if (companyId == null){
             throw new BusinessException(1020, "公司不存在");
         }
+        if (companyId == -1){
+            return this.page(page, Wrappers.<Departments>emptyWrapper());
+        }
         return this.page(page, Wrappers.<Departments>lambdaQuery().eq(Departments::getCompanyId, companyId));
     }
 

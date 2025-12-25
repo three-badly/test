@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
 import qiangtai.rfid.dto.result.DevicesSaveVO;
 import qiangtai.rfid.dto.result.Result;
@@ -36,6 +37,11 @@ public class DeviceController {
     @GetMapping("/listDevice")
     @Operation(summary = "设备少,列表查看设备")
     public Result<?> listDevice() {
+        Integer companyId = UserContext.get().getCompanyId();
+        //平台看全部
+        if (companyId == -1){
+            return Result.success(devicesService.list());
+        }
         return Result.success(devicesService.listDevice());
     }
 

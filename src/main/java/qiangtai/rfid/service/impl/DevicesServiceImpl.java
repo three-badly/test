@@ -5,9 +5,11 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
 import qiangtai.rfid.dto.result.DevicesSaveVO;
 import qiangtai.rfid.entity.Devices;
+import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.service.DevicesService;
 import qiangtai.rfid.mapper.DevicesMapper;
 import org.springframework.stereotype.Service;
@@ -33,32 +35,44 @@ public class DevicesServiceImpl extends ServiceImpl<DevicesMapper, Devices>
 
     @Override
     public List<Devices> listDevice() {
-        //暂时筛选公司id为1
-        List<Devices> devices = devicesMapper.selectList(Wrappers.<Devices>lambdaQuery().eq(Devices::getCompanyId, 1));
-        return devices;
+        Integer companyId = UserContext.get().getCompanyId();
+        return devicesMapper.selectList(Wrappers.<Devices>lambdaQuery().eq(Devices::getCompanyId, companyId));
     }
 
     @Override
     public Page<Devices> pageDevice(DevicesQueryVO devicesQueryVO) {
-        //暂时筛选公司id为1
-        LambdaQueryWrapper<Devices> eq = Wrappers.<Devices>lambdaQuery().eq(Devices::getCompanyId, 1);
+        Integer companyId = UserContext.get().getCompanyId();
+
         Page<Devices> page = new Page<>(devicesQueryVO.getCurrent(), devicesQueryVO.getSize());
+        //平台查全部
+        if (companyId == -1){
+            return this.page(page, Wrappers.<Devices>emptyWrapper());
+        }
+        LambdaQueryWrapper<Devices> eq = Wrappers.<Devices>lambdaQuery().eq(Devices::getCompanyId, companyId);
         return devicesMapper.selectPage(page, eq);
     }
 
     @Override
     public Boolean add(DevicesSaveVO devicesSaveVO) {
         Devices devices = BeanUtil.copyProperties(devicesSaveVO, Devices.class);
-        //todo 上下文添加公司id
+        devices.setCompanyId(UserContext.get().getCompanyId());
         int insert = devicesMapper.insert(devices);
         return insert > 0;
     }
 
     @Override
     public Boolean deleteDevice(Integer id) {
-        //todo 删除权限控制
-        int delete = devicesMapper.deleteById(id);
-        return delete > 0;
+        Integer companyId = UserContext.get().getCompanyId();
+
+        //限定权限
+        int delete = devicesMapper.delete(Wrappers.<Devices>lambdaQuery()
+                .eq(Devices::getId, id)
+                .eq(Devices::getCompanyId, companyId)
+        );
+        if (delete <= 0){
+            throw new BusinessException(10023, "不能删除非公司的设备");
+        }
+        return true;
     }
 }
 

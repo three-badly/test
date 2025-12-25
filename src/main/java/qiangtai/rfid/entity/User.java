@@ -56,6 +56,10 @@ public class User {
     private String password;
 
 
+    /**
+     * 密码盐值
+     */
+    private String salt;
 
 
 

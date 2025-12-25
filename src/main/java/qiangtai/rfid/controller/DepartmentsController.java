@@ -1,6 +1,7 @@
 package qiangtai.rfid.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,12 @@ public class DepartmentsController {
     @GetMapping("/listDepartments")
     @Operation(summary = "部门少,列表查看部门")
     public Result<?> listDepartments() {
-        return Result.success(departmentsService.list());
+        Integer companyId = UserContext.get().getCompanyId();
+        //平台看全部
+        if (companyId == -1){
+            return Result.success(departmentsService.list());
+        }
+        return Result.success(departmentsService.list(Wrappers.<Departments>lambdaQuery().eq(Departments::getCompanyId, companyId)));
     }
 
     @PostMapping("/add")
@@ -50,7 +56,6 @@ public class DepartmentsController {
     @DeleteMapping("/{id}")
     @Operation(summary = "删除部门")
     public Result<?> deleteDepartments(@PathVariable Integer id) {
-
         return Result.success(departmentsService.removeDepartById(id));
     }
 }

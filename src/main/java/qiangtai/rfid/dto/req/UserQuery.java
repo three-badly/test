@@ -1,0 +1,7 @@
+package qiangtai.rfid.dto.req;
+
+import lombok.Data;
+
+@Data
+public class UserQuery extends PageRequst{
+}
