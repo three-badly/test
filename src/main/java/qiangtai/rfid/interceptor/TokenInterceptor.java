@@ -26,13 +26,17 @@ public class TokenInterceptor implements HandlerInterceptor {
 
         String token = request.getHeader(Constant.HEADER_TOKEN);
         if (token == null || !token.startsWith("Bearer ")) {
-            throw new BusinessException(10007, "token无效");
-
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"msg\":\"token无效\"}");
+            return false;
         }
         token = token.substring(7);
 
         if (!JWTUtil.verify(token, Constant.TOKEN_SECRET.getBytes())) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json;charset=UTF-8");
+            response.getWriter().write("{\"msg\":\"token无效\"}");
             return false;
         }
 

@@ -12,7 +12,7 @@ public class UserNameInfo {
     /**
      * 用户名
      */
-    private String username;
+    private String account;
 
 
     /**

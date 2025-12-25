@@ -12,7 +12,7 @@ public class LoginVO {
      * 用户名
      */
     @NotEmpty
-    private String username;
+    private String account;
 
     /**
      * 密码

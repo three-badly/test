@@ -2,7 +2,6 @@ package qiangtai.rfid.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
-import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -26,9 +25,7 @@ import qiangtai.rfid.mapper.CompanyMapper;
 import qiangtai.rfid.mapper.LoginMapper;
 import qiangtai.rfid.service.CompanyService;
 import qiangtai.rfid.service.LoginService;
-import qiangtai.rfid.utils.DigestUtil;
 
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,10 +43,10 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
     @Override
     public UserResultVO login(LoginVO loginVO) {
         log.info("用户登录：{}", loginVO);
-        String username = loginVO.getUsername();
+        String username = loginVO.getAccount();
         String password = loginVO.getPassword();
         User user = loginMapper.selectOne(Wrappers.<User>lambdaQuery()
-                .eq(User::getUsername, username)
+                .eq(User::getAccount, username)
         );
         if (user == null) {
             throw new BusinessException(10008, "用户不存在");
@@ -92,7 +89,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
     @Override
     public UserNameInfo addUser(UserSaveVO userSaveVO) {
         //todo 谁能新加账号？
-        if (userSaveVO.getCompanyId() == -1 || userSaveVO.getUsername().equals(Constant.ROOT_NAME)) {
+        if (userSaveVO.getCompanyId() == -1 || userSaveVO.getAccount().equals(Constant.ROOT_NAME)) {
             throw new BusinessException(10008, "名字不可为" + Constant.ROOT_NAME);
         }
         //校验companyId是否存在
@@ -105,10 +102,10 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
         //校验是否多个账户（需求是否需要）todo
         List<String> list = loginMapper.selectList(Wrappers.<User>lambdaQuery())
                 .stream()
-                .map(User::getUsername)
+                .map(User::getAccount)
                 .collect(Collectors.toList());
         //查看是否账号名重复
-        if (list.contains(userSaveVO.getUsername())) {
+        if (list.contains(userSaveVO.getAccount())) {
             throw new BusinessException(10008, "用户名已存在");
         }
         User user = BeanUtil.copyProperties(userSaveVO, User.class);

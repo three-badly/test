@@ -7,7 +7,6 @@ import qiangtai.rfid.dto.req.UserQuery;
 import qiangtai.rfid.dto.req.UserSaveVO;
 import qiangtai.rfid.dto.rsp.UserNameInfo;
 import qiangtai.rfid.dto.rsp.UserResultVO;
-import qiangtai.rfid.entity.Departments;
 import qiangtai.rfid.entity.User;
 
 import java.util.List;
