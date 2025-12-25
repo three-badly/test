@@ -42,5 +42,5 @@ public class Company {
     /**
      * 创建时间
      */
-    private LocalDateTime createdAt;
+    private LocalDateTime createTime;
 }

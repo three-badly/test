@@ -1,17 +1,17 @@
 package qiangtai.rfid.dto.req;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
-@Data
-public class DepartmentQuery extends PageRequst {
-    /**
-     * 部门id
-     */
-    @TableId(type = IdType.AUTO)
-    private Integer id;
+import javax.validation.constraints.NotNull;
 
+@Data
+public class DepartmentsUpdateVO {
+
+    /**
+     * 部门ID
+     */
+    @NotNull(message = "部门ID不能为空")
+    private Integer id;
     /**
      * 部门名称
      */

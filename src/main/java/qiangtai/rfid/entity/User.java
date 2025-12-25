@@ -34,7 +34,7 @@ public class User {
      * ID
      */
     @TableId(value = "id", type = IdType.AUTO)
-    private Long id;
+    private Integer id;
 
     /**
      * 身份[0- 1-]

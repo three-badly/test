@@ -1,6 +1,8 @@
 package qiangtai.rfid.context;
 
 
+import lombok.Getter;
+
 public final class UserContext {
     private static final ThreadLocal<UserInfo> HOLDER = new ThreadLocal<>();
 
@@ -16,15 +18,14 @@ public final class UserContext {
         HOLDER.remove();
     }
 
+    @Getter
     public static class UserInfo {
-        private final String userId;
-        private final String companyId;
+        private final Integer userId;
+        private final Integer companyId;
 
-        public UserInfo(String userId, String companyId) {
+        public UserInfo(Integer userId, Integer companyId) {
             this.userId = userId;
             this.companyId = companyId;
         }
-        public String getUserId() { return userId; }
-        public String getCompanyId() { return companyId; }
     }
 }

@@ -30,5 +30,5 @@ public class CompanySaveVO {
     /**
      * 创建时间
      */
-    private LocalDateTime createdAt;
+    private LocalDateTime createTime;
 }

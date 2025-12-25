@@ -38,8 +38,9 @@ public class TokenInterceptor implements HandlerInterceptor {
 
         JWT jwt = JWTUtil.parseToken(token);
         Map<String, Object> payload = jwt.getPayloads();
-        String userId    = String.valueOf(payload.get(Constant.TOKEN_USER_ID));
-        String companyId = String.valueOf(payload.get(Constant.TOKEN_COMPANY_ID));
+        // 安全写法
+        Integer userId    = ((Number) payload.get(Constant.TOKEN_USER_ID)).intValue();
+        Integer companyId = ((Number) payload.get(Constant.TOKEN_COMPANY_ID)).intValue();
 
         // 放入 ThreadLocal 上下文
         UserContext.set(new UserContext.UserInfo(userId, companyId));

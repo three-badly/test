@@ -5,7 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDateTime;
+
 import lombok.Data;
 
 /**
@@ -44,7 +45,7 @@ public class Devices implements Serializable {
     /**
      * 最后在线时间
      */
-    private Date lastHeartbeat;
+    private LocalDateTime lastHeartbeat;
 
     @TableField(exist = false)
     private static final long serialVersionUID = 1L;
