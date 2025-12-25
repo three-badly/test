@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import qiangtai.rfid.constant.Constant;
 import qiangtai.rfid.context.UserContext;
+import qiangtai.rfid.handler.exception.BusinessException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -28,9 +29,8 @@ public class TokenInterceptor implements HandlerInterceptor {
 
         String token = request.getHeader(Constant.HEADER_TOKEN);
         if (token == null || !token.startsWith("Bearer ")) {
-            log.warn("【TokenInterceptor】token is null");
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return false;
+            throw new BusinessException(10007, "token无效");
+
         }
         token = token.substring(7);
 
