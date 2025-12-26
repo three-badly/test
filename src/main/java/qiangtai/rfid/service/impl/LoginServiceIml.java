@@ -15,8 +15,10 @@ import qiangtai.rfid.constant.Constant;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.LoginVO;
 
+import qiangtai.rfid.dto.req.UserMobileNameUpadteVO;
 import qiangtai.rfid.dto.req.UserQuery;
 import qiangtai.rfid.dto.req.UserSaveVO;
+import qiangtai.rfid.dto.req.UserUpdatePasswordVO;
 import qiangtai.rfid.dto.rsp.UserNameInfo;
 import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.entity.Company;
@@ -30,6 +32,7 @@ import qiangtai.rfid.service.LoginService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -181,5 +184,69 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
                     return userResultVO;
                 }).collect(Collectors.toList());
 
+    }
+
+    @Override
+    public Boolean updatePassword(UserUpdatePasswordVO userUpdatePasswordVO) {
+
+        Integer userId = UserContext.get().getUserId();
+        if (!Objects.equals(userUpdatePasswordVO.getId(), userId)) {
+            throw new BusinessException(10008, "只能修改自己的密码");
+        }
+        User user = loginMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getId, userUpdatePasswordVO.getId()));
+        String salt = user.getSalt();
+        //密码盐值
+        String defPassword = SecureUtil.sha256(userUpdatePasswordVO.getOldPassword() + salt);
+
+        if (!defPassword.equals(user.getPassword())) {
+            throw new BusinessException(10009, "旧密码错误");
+        }
+        defPassword = SecureUtil.sha256(userUpdatePasswordVO.getNewPassword() + salt);
+        user.setPassword(defPassword);
+
+        return this.updateById(user);
+    }
+
+    @Override
+    public Boolean updateMobileName(UserMobileNameUpadteVO userMobileNameUpadteVO) {
+        //限定权限
+        if (!Objects.equals(UserContext.get().getUserId(), userMobileNameUpadteVO.getId())){
+            throw new BusinessException(10008, "只能修改自己的信息");
+        }
+        //修改账号
+        List<String> list = loginMapper.selectList(Wrappers.<User>lambdaQuery()
+                        .ne(User::getId, userMobileNameUpadteVO.getId()))
+                .stream()
+                .map(User::getAccount)
+                .collect(Collectors.toList());
+        //查看是否账号名重复
+        if (list.contains(userMobileNameUpadteVO.getAccount())) {
+            throw new BusinessException(10008, "登录账号存在相同名，修改失败");
+        }
+        //修改手机号
+
+        //修改账号持有人名字
+        return this.updateById(BeanUtil.copyProperties(userMobileNameUpadteVO, User.class));
+    }
+
+    @Override
+    public UserResultVO detail(Integer id) {
+        User user = this.getById(id);
+        return BeanUtil.copyProperties(user, UserResultVO.class);
+    }
+
+    @Override
+    public Boolean deleteUser(Integer id) {
+        //一级管理员（平台管理员）才能删除账号
+        if (UserContext.get().getCompanyId() != -1) {
+            throw new BusinessException(10008, "当前账号权限不足");
+        }
+        //确定删除账号id是否存在
+        User user = this.getById(id);
+        if (user == null) {
+            throw new BusinessException(10013, "账号不存在");
+        }
+
+        return this.removeById(id);
     }
 }
