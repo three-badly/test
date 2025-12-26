@@ -170,7 +170,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
                 .collect(Collectors.toMap(Company::getId, Company::getCompanyName));
         Integer companyId = UserContext.get().getCompanyId();
         return this.list(Wrappers.<User>lambdaQuery()
-                        .ge(companyId != -1, User::getCompanyId, companyId)
+                        .eq(companyId != -1, User::getCompanyId, companyId)
                 ).stream()
                 //过滤掉公司id为-1的平台管理员
                 .filter(user -> user.getCompanyId() != -1)
