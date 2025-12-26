@@ -9,11 +9,14 @@ import org.springframework.util.StringUtils;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.EmployeesQuery;
 import qiangtai.rfid.dto.req.EmployeesSaveVO;
+import qiangtai.rfid.dto.result.EmployeesResultVO;
 import qiangtai.rfid.entity.Employees;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.service.EmployeesService;
 import qiangtai.rfid.mapper.EmployeesMapper;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * @author FEI
@@ -38,7 +41,8 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         Long realId = Long.parseLong(id);
         boolean remove = this.remove(Wrappers.<Employees>lambdaQuery()
                 .eq(Employees::getId, realId)
-                .eq(Employees::getCompanyId, UserContext.get().getCompanyId()));
+                //todo系统管理员是否有权限？
+                .eq(UserContext.get().getCompanyId() != -1,Employees::getCompanyId, UserContext.get().getCompanyId()));
         if (!remove) {
             throw new BusinessException(10023, "当前公司员工不存在");
         }
@@ -47,7 +51,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
     }
 
     @Override
-    public Page<Employees> pageEmployees(EmployeesQuery employeesQuery) {
+    public Page<EmployeesResultVO> pageEmployees(EmployeesQuery employeesQuery) {
         Page<Employees> page = new Page<>(employeesQuery.getCurrent(), employeesQuery.getSize());
         LambdaQueryWrapper<Employees> wrapper = Wrappers.lambdaQuery();
         wrapper.like(StringUtils.hasText(employeesQuery.getName()), Employees::getName, employeesQuery.getName())
@@ -55,9 +59,16 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
                         Employees::getPhoneNumber, employeesQuery.getPhoneNumber())
                 .eq(employeesQuery.getDepartmentId() != null,
                         Employees::getDepartmentId, employeesQuery.getDepartmentId())
-                // 本公司
-                .eq(Employees::getCompanyId, UserContext.get().getCompanyId());
-        return this.page(page, wrapper);
+                // 本公司 todo系统管理员是否有权限？
+                .eq(UserContext.get().getCompanyId() != -1,
+                        Employees::getCompanyId, UserContext.get().getCompanyId());
+        Page<Employees> page1 = this.page(page, wrapper);
+        Page<EmployeesResultVO> page2 = new Page<>();
+        BeanUtil.copyProperties(page1, page2);
+        //封装回字符串型态防止前端精度丢失
+        List<EmployeesResultVO> employeesResultVOS = BeanUtil.copyToList(page1.getRecords(), EmployeesResultVO.class);
+        page2.setRecords(employeesResultVOS);
+        return page2;
 
     }
 
@@ -65,6 +76,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
     public Boolean updateEmployees(Employees employees1) {
         Employees employees = this.getOne(Wrappers.<Employees>lambdaQuery()
                 .eq(Employees::getId, employees1.getId())
+                //todo系统管理员是否有权限？
                 .eq(Employees::getCompanyId, UserContext.get().getCompanyId()));
         if (employees == null) {
             throw new BusinessException(10023, "当前公司员工不存在");

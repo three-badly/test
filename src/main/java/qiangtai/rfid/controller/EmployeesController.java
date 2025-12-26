@@ -11,11 +11,13 @@ import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.EmployeesQuery;
 import qiangtai.rfid.dto.req.EmployeesSaveVO;
 import qiangtai.rfid.dto.req.EmployeesUpdateVO;
+import qiangtai.rfid.dto.result.EmployeesResultVO;
 import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.entity.Employees;
 import qiangtai.rfid.service.EmployeesService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 @RequestMapping("/employees")
 @RestController
@@ -33,11 +35,10 @@ public class EmployeesController {
     @Operation(summary = "员工少,列表查看员工")
     public Result<?> listEmployees() {
         Integer companyId = UserContext.get().getCompanyId();
-        //平台看全部
-        /*if (companyId == -1){
-            return Result.success(employeesService.list());
-        }*/
-        return Result.success(employeesService.list(Wrappers.<Employees>lambdaQuery().eq(Employees::getCompanyId, companyId)));
+        //todo系统管理员是否有权限？
+        List<Employees> list = employeesService.list(Wrappers.<Employees>lambdaQuery()
+                .eq(UserContext.get().getCompanyId() != -1,Employees::getCompanyId, companyId));
+        return Result.success(BeanUtil.copyToList(list, EmployeesResultVO.class));
     }
 
     @PostMapping("/add")
@@ -57,4 +58,6 @@ public class EmployeesController {
     public Result<?> deleteEmployees(@PathVariable String id) {
         return Result.success(employeesService.removeEmployeeById(id));
     }
+    //todo excel导入接口
+
 }
