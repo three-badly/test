@@ -7,6 +7,7 @@ import com.baomidou.mybatisplus.annotation.TableName;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 /**
@@ -20,6 +21,7 @@ public class Devices implements Serializable {
      * 设备序列号/编号
      */
     @TableId(type = IdType.AUTO)
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Integer id;
 
     /**
@@ -40,7 +42,7 @@ public class Devices implements Serializable {
     /**
      * 设备状态
      */
-    private Object status;
+    private String status;
 
     /**
      * 最后在线时间

@@ -11,7 +11,8 @@ public class EmployeesResultVO {
     /**
      * 员工id转String防止精度丢失
      */
-    private String id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
+    private Long id;
 
     /**
      * 手机号 (机器读取的ID)

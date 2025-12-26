@@ -42,7 +42,7 @@ public class DevicesSaveVO {
     /**
      * 设备状态
      */
-    private Object status;
+    private String status;
 
     /**
      * 最后在线时间

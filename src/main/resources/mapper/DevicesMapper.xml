@@ -9,7 +9,7 @@
             <result property="name" column="name" jdbcType="VARCHAR"/>
             <result property="companyId" column="company_id" jdbcType="INTEGER"/>
             <result property="location" column="location" jdbcType="VARCHAR"/>
-            <result property="status" column="status" jdbcType="OTHER"/>
+            <result property="status" column="status" jdbcType="VARCHAR"/>
             <result property="lastHeartbeat" column="last_heartbeat" jdbcType="TIMESTAMP"/>
     </resultMap>
 
