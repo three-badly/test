@@ -3,11 +3,8 @@ package qiangtai.rfid.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import qiangtai.rfid.dto.req.DepartmentQuery;
 import qiangtai.rfid.dto.req.DepartmentsSaveVO;
-import qiangtai.rfid.dto.result.DevicesSaveVO;
 import qiangtai.rfid.entity.Departments;
 import com.baomidou.mybatisplus.extension.service.IService;
-
-import javax.validation.Valid;
 
 /**
 * @author FEI

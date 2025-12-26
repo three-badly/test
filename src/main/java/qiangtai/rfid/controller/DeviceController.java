@@ -7,7 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
-import qiangtai.rfid.dto.result.DevicesSaveVO;
+import qiangtai.rfid.dto.req.DevicesSaveVO;
 import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.service.DevicesService;
 

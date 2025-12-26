@@ -7,7 +7,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
-import qiangtai.rfid.dto.result.DevicesSaveVO;
+import qiangtai.rfid.dto.req.DevicesSaveVO;
 import qiangtai.rfid.entity.Devices;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.service.DevicesService;

@@ -9,14 +9,17 @@ import org.springframework.util.StringUtils;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.EmployeesQuery;
 import qiangtai.rfid.dto.req.EmployeesSaveVO;
-import qiangtai.rfid.dto.result.EmployeesResultVO;
+import qiangtai.rfid.dto.rsp.EmployeesResultVO;
 import qiangtai.rfid.entity.Employees;
 import qiangtai.rfid.handler.exception.BusinessException;
+import qiangtai.rfid.mapper.CompanyMapper;
+import qiangtai.rfid.mapper.DepartmentsMapper;
 import qiangtai.rfid.service.EmployeesService;
 import qiangtai.rfid.mapper.EmployeesMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author FEI
@@ -27,11 +30,23 @@ import java.util.List;
 public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees>
         implements EmployeesService {
 
+    private final DepartmentsMapper departmentsMapper;
+    private final CompanyMapper companyMapper;
+
+    public EmployeesServiceImpl(DepartmentsMapper departmentsMapper, CompanyMapper companyMapper) {
+        this.departmentsMapper = departmentsMapper;
+        this.companyMapper = companyMapper;
+    }
+
     @Override
     public Boolean add(EmployeesSaveVO employeesSaveVO) {
         Employees employees = BeanUtil.copyProperties(employeesSaveVO, Employees.class);
         Integer companyId = UserContext.get().getCompanyId();
         employees.setCompanyId(companyId);
+        String departmentName = departmentsMapper.selectById(employees.getDepartmentId()).getDepartmentName();
+        employees.setDepartmentName(departmentName);
+        String companyName = companyMapper.selectById(companyId).getCompanyName();
+        employees.setCompanyName(companyName);
         return this.save(employees);
     }
 
@@ -81,6 +96,13 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         if (employees == null) {
             throw new BusinessException(10023, "当前公司员工不存在");
         }
+        //只要部门id更新，立即更新冗余字段部门名字
+        if (!Objects.equals(employees1.getDepartmentId(), employees.getDepartmentId())){
+            //数据库提取部门名字
+            String departmentName = departmentsMapper.selectById(employees.getDepartmentId()).getDepartmentName();
+            employees1.setDepartmentName(departmentName);
+        }
+
         return this.updateById(employees1);
     }
 }

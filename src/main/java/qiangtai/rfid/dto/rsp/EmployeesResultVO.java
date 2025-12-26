@@ -1,4 +1,4 @@
-package qiangtai.rfid.dto.result;
+package qiangtai.rfid.dto.rsp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;

@@ -11,7 +11,7 @@ import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.EmployeesQuery;
 import qiangtai.rfid.dto.req.EmployeesSaveVO;
 import qiangtai.rfid.dto.req.EmployeesUpdateVO;
-import qiangtai.rfid.dto.result.EmployeesResultVO;
+import qiangtai.rfid.dto.rsp.EmployeesResultVO;
 import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.entity.Employees;
 import qiangtai.rfid.service.EmployeesService;

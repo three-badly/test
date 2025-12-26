@@ -1,4 +1,4 @@
-package qiangtai.rfid.dto.result;
+package qiangtai.rfid.dto.rsp;
 
 import lombok.Data;
 

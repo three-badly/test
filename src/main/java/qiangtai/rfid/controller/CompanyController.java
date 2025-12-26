@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import qiangtai.rfid.dto.req.CompanyQuery;
 import qiangtai.rfid.dto.req.CompanySaveVO;
-import qiangtai.rfid.dto.result.CompanyNameId;
+import qiangtai.rfid.dto.rsp.CompanyNameId;
 import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.dto.rsp.CompanyResultVO;
 import qiangtai.rfid.entity.Company;

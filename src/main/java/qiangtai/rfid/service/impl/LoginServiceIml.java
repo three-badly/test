@@ -4,6 +4,7 @@ import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.jwt.JWTUtil;
+import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -99,7 +100,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
         if (company == null) {
             throw new BusinessException(10008, "公司不存在");
         }
-        //校验是否多个账户（需求是否需要）todo
+
         List<String> list = loginMapper.selectList(Wrappers.<User>lambdaQuery())
                 .stream()
                 .map(User::getAccount)
@@ -131,7 +132,10 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
 
         //平台管理员
         if (companyId == -1) {
-            Page<User> page1 = this.page(new Page<>(userQuery.getCurrent(), userQuery.getSize()), Wrappers.<User>emptyWrapper());
+            Page<User> page1 = this.page(new Page<>(userQuery.getCurrent(), userQuery.getSize()), Wrappers
+                    .<User>lambdaQuery()
+                    //可模糊查询
+                    .like(StringUtils.isNotBlank(userQuery.getUsername()), User::getUsername, userQuery.getUsername()));
             //过滤掉公司id为-1的平台管理员，并赋值公司名称
             List<UserResultVO> collect = page1.getRecords().stream().filter(user -> user.getCompanyId() != -1).map(user -> {
                 UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
@@ -144,7 +148,10 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
         }
         //公司管理员只筛选公司下的用户
         Page<User> page1 = this.page(new Page<>(userQuery.getCurrent(), userQuery.getSize()), Wrappers.<User>lambdaQuery()
-                .eq(User::getCompanyId, companyId));
+                .eq(User::getCompanyId, companyId)
+                //可模糊查询
+                .like(StringUtils.isNotBlank(userQuery.getUsername()), User::getUsername, userQuery.getUsername())
+        );
         List<UserResultVO> collect = page1.getRecords().stream().map(user -> {
             UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
             userResultVO.setCompanyName(companyMap.get(user.getCompanyId()));
@@ -157,26 +164,22 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
 
     @Override
     public List<UserResultVO> listUser() {
+        //回显公司名称
         List<Company> companyList = companyService.getCompanyList();
         Map<Integer, String> companyMap = companyList.stream()
                 .collect(Collectors.toMap(Company::getId, Company::getCompanyName));
         Integer companyId = UserContext.get().getCompanyId();
-        if (companyId == -1) {
-            return this.list(Wrappers.<User>lambdaQuery()
-                    .ne(User::getCompanyId, companyId)
-            ).stream().map(user -> {
-                UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
-                userResultVO.setCompanyName(companyMap.get(user.getCompanyId()));
-                return userResultVO;
-            }).collect(Collectors.toList());
-        }
         return this.list(Wrappers.<User>lambdaQuery()
-                .eq(User::getCompanyId, companyId)
-        ).stream().map(user -> {
-            UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
-            userResultVO.setCompanyName(companyMap.get(user.getCompanyId()));
-            return userResultVO;
-        }).collect(Collectors.toList());
+                        .ge(companyId != -1, User::getCompanyId, companyId)
+                ).stream()
+                //过滤掉公司id为-1的平台管理员
+                .filter(user -> user.getCompanyId() != -1)
+                //封装结果集
+                .map(user -> {
+                    UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
+                    userResultVO.setCompanyName(companyMap.get(user.getCompanyId()));
+                    return userResultVO;
+                }).collect(Collectors.toList());
 
     }
 }

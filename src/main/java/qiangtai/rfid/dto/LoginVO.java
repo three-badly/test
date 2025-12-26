@@ -9,7 +9,7 @@ import javax.validation.constraints.NotEmpty;
 public class LoginVO {
 
     /**
-     * 用户名
+     * 登录账号
      */
     @NotEmpty
     private String account;

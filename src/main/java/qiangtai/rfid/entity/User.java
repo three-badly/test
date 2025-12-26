@@ -41,11 +41,20 @@ public class User {
      * 身份[0- 1-]
      */
     private String role;
+    /**
+     * 手机号
+     */
+    private String mobile;
 
     /**
-     * 用户名
+     * 登录账号
      */
     private String account;
+    /**
+     * 账号持有人名字
+     */
+    private String username;
+
 
     /**
      * 公司id

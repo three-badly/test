@@ -2,12 +2,10 @@ package qiangtai.rfid.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
-import qiangtai.rfid.dto.result.DevicesSaveVO;
-import qiangtai.rfid.dto.result.Result;
+import qiangtai.rfid.dto.req.DevicesSaveVO;
 import qiangtai.rfid.entity.Devices;
 import com.baomidou.mybatisplus.extension.service.IService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**

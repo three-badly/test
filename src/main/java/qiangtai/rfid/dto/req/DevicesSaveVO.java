@@ -1,4 +1,4 @@
-package qiangtai.rfid.dto.result;
+package qiangtai.rfid.dto.req;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;

@@ -17,17 +17,25 @@ public class UserResultVO {
     private String role;
 
     /**
-     * 用户名
+     * 手机号
+     */
+    private String mobile;
+
+    /**
+     * 登录账号
      */
     private String account;
-
-
+    /**
+     * 账号持有人名字
+     */
+    private String username;
     /**
      * 公司id
      */
     private Integer companyId;
     private String token;
     private String companyName;
+
 
 
 
