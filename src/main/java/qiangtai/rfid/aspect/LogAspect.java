@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
+
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.Signature;
@@ -25,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @Aspect
 @Component
+@Slf4j
 public class LogAspect {
 
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
@@ -107,7 +110,11 @@ public class LogAspect {
         Object result = proceedingJoinPoint.proceed();
 
         // 排除字段，敏感字段或太长的字段不显示：身份证、手机号、邮箱、密码等
-
+        try {
+            LOG.warn("返回结果: {}", objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsString(result));
+        } catch (Exception e) {
+            LOG.error("返回结果序列化失败: ", e);
+        }
 
         LOG.info("------------- 结束 耗时：{} ms -------------", System.currentTimeMillis() - startTime);
         return result;
