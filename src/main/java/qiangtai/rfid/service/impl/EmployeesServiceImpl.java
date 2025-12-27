@@ -132,11 +132,11 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         list.forEach(employees -> {
             Integer departmentId = departNames.get(employees.getDepartmentName());
             if (departmentId == null) {
-                throw new BusinessException(10023, "部门不存在");
+                throw new BusinessException(10023, employees.getDepartmentName() +" 部门不存在");
             }
             employees.setDepartmentId(departmentId);
         });
-        // 1. 按需做重复校验（例如手机号）
+        // 1. 按需做重复校验（例如手机号
         List<String> phones = list.stream().map(Employees::getPhoneNumber).collect(Collectors.toList());
         List<Employees> exist = employeesMapper.selectList(Wrappers.<Employees>lambdaQuery()
                 .eq(Employees::getCompanyId, UserContext.get().getCompanyId())
