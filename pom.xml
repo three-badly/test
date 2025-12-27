@@ -65,7 +65,12 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <!-- 版本由 BOM 统一管理，这里省略 -->
         </dependency>
-
+        <!-- 已有 BOM/dependencyManagement 不变，直接在 dependencies 节点追加 -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>easyexcel</artifactId>
+            <version>3.3.2</version>
+        </dependency>
 
         <dependency>
             <groupId>com.alibaba</groupId>

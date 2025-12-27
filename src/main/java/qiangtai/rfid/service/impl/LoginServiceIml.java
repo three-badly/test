@@ -62,21 +62,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
         if (!defPassword.equals(user.getPassword())) {
             throw new BusinessException(10009, "密码错误");
         }
-        //生成token
-        Map<String, Object> map = new HashMap<String, Object>() {
-            private static final long serialVersionUID = 1L;
-
-            {
-                put(Constant.TOKEN_USER_ID, user.getId());
-                put(Constant.TOKEN_COMPANY_ID, user.getCompanyId());
-                put("expire_time", System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15);
-            }
-        };
-
-        String token = JWTUtil.createToken(map, Constant.TOKEN_SECRET.getBytes());
-
         UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
-        userResultVO.setToken(token);
         Company company = new Company();
         company.setCompanyName("平台管理员");
         if (userResultVO.getCompanyId() != -1) {
@@ -85,6 +71,24 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
                 throw new BusinessException(10008, "公司不存在");
             }
         }
+        //生成token
+        Company finalCompany = company;
+        Map<String, Object> map = new HashMap<String, Object>() {
+            private static final long serialVersionUID = 1L;
+
+            {
+                put(Constant.TOKEN_USER_ID, user.getId());
+                put(Constant.TOKEN_COMPANY_ID, user.getCompanyId());
+                put(Constant.TOKEN_COMPANY_NAME, finalCompany.getCompanyName());
+                put("expire_time", System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15);
+            }
+        };
+
+        String token = JWTUtil.createToken(map, Constant.TOKEN_SECRET.getBytes());
+
+
+        userResultVO.setToken(token);
+
 
         userResultVO.setCompanyName(company.getCompanyName());
         return userResultVO;

@@ -3,9 +3,12 @@ package qiangtai.rfid.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import qiangtai.rfid.dto.req.EmployeesQuery;
 import qiangtai.rfid.dto.req.EmployeesSaveVO;
+import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.dto.rsp.EmployeesResultVO;
 import qiangtai.rfid.entity.Employees;
 import com.baomidou.mybatisplus.extension.service.IService;
+
+import java.util.List;
 
 /**
 * @author FEI
@@ -21,4 +24,6 @@ public interface EmployeesService extends IService<Employees> {
     Page<EmployeesResultVO> pageEmployees(EmployeesQuery employeesQuery);
 
     Boolean updateEmployees(Employees employees1);
+
+    Result<?> importExcel(List<Employees> successList);
 }

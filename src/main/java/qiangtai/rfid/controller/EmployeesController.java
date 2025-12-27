@@ -1,12 +1,15 @@
 package qiangtai.rfid.controller;
 
 import cn.hutool.core.bean.BeanUtil;
+import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.EmployeesQuery;
 import qiangtai.rfid.dto.req.EmployeesSaveVO;
@@ -14,11 +17,15 @@ import qiangtai.rfid.dto.req.EmployeesUpdateVO;
 import qiangtai.rfid.dto.rsp.EmployeesResultVO;
 import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.entity.Employees;
+import qiangtai.rfid.excel.ImportListener.EmployeesImportListener;
+import qiangtai.rfid.excel.exportVO.EmployeesImportExcel;
 import qiangtai.rfid.service.EmployeesService;
 
 import javax.validation.Valid;
 import java.util.List;
 
+
+@Slf4j
 @RequestMapping("/employees")
 @RestController
 @RequiredArgsConstructor
@@ -59,5 +66,24 @@ public class EmployeesController {
         return Result.success(employeesService.removeEmployeeById(id));
     }
     //todo excel导入接口
+    @PostMapping("/import")
+    @Operation(summary = "Excel 批量导入员工")
+    public Result<?> importEmployees(@RequestPart("file") MultipartFile file) {
+        if (file == null || file.isEmpty()) {
+            return Result.fail("请上传文件");
+        }
+        try {
+            EmployeesImportListener listener = new EmployeesImportListener();
+            EasyExcel.read(file.getInputStream(), EmployeesImportExcel.class, listener).sheet().doRead();
+
+            if (!listener.getErrorMap().isEmpty()) {
+                return Result.fail("导入存在错误"+ listener.getErrorMap());
+            }
+            return employeesService.importExcel(listener.getSuccessList());
+        } catch (Exception e) {
+            log.error("导入异常：", e);
+            return Result.fail("导入异常：" + e.getMessage());
+        }
+    }
 
 }

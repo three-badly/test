@@ -45,10 +45,11 @@ public class TokenInterceptor implements HandlerInterceptor {
         // 安全写法
         Integer userId    = ((Number) payload.get(Constant.TOKEN_USER_ID)).intValue();
         Integer companyId = ((Number) payload.get(Constant.TOKEN_COMPANY_ID)).intValue();
+        String companyName = ((String) payload.get(Constant.TOKEN_COMPANY_NAME));
 
         // 放入 ThreadLocal 上下文
-        UserContext.set(new UserContext.UserInfo(userId, companyId));
-        log.warn("【TokenInterceptor】ThreadLocal 已写入 userId={},companyId={}", userId,companyId);
+        UserContext.set(new UserContext.UserInfo(userId, companyId,companyName));
+        log.warn("【TokenInterceptor】ThreadLocal 已写入 userId={},companyId={},companyName={}", userId,companyId,companyName);
         return true;
     }
 

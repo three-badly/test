@@ -1,15 +1,20 @@
 package qiangtai.rfid.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.EmployeesQuery;
 import qiangtai.rfid.dto.req.EmployeesSaveVO;
+import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.dto.rsp.EmployeesResultVO;
+import qiangtai.rfid.entity.Company;
+import qiangtai.rfid.entity.Departments;
 import qiangtai.rfid.entity.Employees;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.mapper.CompanyMapper;
@@ -19,7 +24,9 @@ import qiangtai.rfid.mapper.EmployeesMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author FEI
@@ -32,10 +39,12 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
 
     private final DepartmentsMapper departmentsMapper;
     private final CompanyMapper companyMapper;
+    private final EmployeesMapper employeesMapper;
 
-    public EmployeesServiceImpl(DepartmentsMapper departmentsMapper, CompanyMapper companyMapper) {
+    public EmployeesServiceImpl(DepartmentsMapper departmentsMapper, CompanyMapper companyMapper, EmployeesMapper employeesMapper) {
         this.departmentsMapper = departmentsMapper;
         this.companyMapper = companyMapper;
+        this.employeesMapper = employeesMapper;
     }
 
     @Override
@@ -57,7 +66,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         boolean remove = this.remove(Wrappers.<Employees>lambdaQuery()
                 .eq(Employees::getId, realId)
                 //todo系统管理员是否有权限？
-                .eq(UserContext.get().getCompanyId() != -1,Employees::getCompanyId, UserContext.get().getCompanyId()));
+                .eq(UserContext.get().getCompanyId() != -1, Employees::getCompanyId, UserContext.get().getCompanyId()));
         if (!remove) {
             throw new BusinessException(10023, "当前公司员工不存在");
         }
@@ -97,13 +106,48 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
             throw new BusinessException(10023, "当前公司员工不存在");
         }
         //只要部门id更新，立即更新冗余字段部门名字
-        if (!Objects.equals(employees1.getDepartmentId(), employees.getDepartmentId())){
+        if (!Objects.equals(employees1.getDepartmentId(), employees.getDepartmentId())) {
             //数据库提取部门名字
             String departmentName = departmentsMapper.selectById(employees.getDepartmentId()).getDepartmentName();
             employees1.setDepartmentName(departmentName);
         }
 
         return this.updateById(employees1);
+    }
+
+    /**
+     * EasyExcel 导入
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public Result<?> importExcel(List<Employees> list) {
+        if (CollUtil.isEmpty(list)) {
+            return Result.fail("导入数据为空");
+        }
+        //赋值部门id
+        Map<String, Integer> departNames = departmentsMapper.selectList(Wrappers.<Departments>lambdaQuery()
+                .eq(Departments::getCompanyId, UserContext.get().getCompanyId())
+        ).stream().collect(Collectors.toMap(Departments::getDepartmentName, Departments::getId));
+
+        list.forEach(employees -> {
+            Integer departmentId = departNames.get(employees.getDepartmentName());
+            if (departmentId == null) {
+                throw new BusinessException(10023, "部门不存在");
+            }
+            employees.setDepartmentId(departmentId);
+        });
+        // 1. 按需做重复校验（例如手机号）
+        List<String> phones = list.stream().map(Employees::getPhoneNumber).collect(Collectors.toList());
+        List<Employees> exist = employeesMapper.selectList(Wrappers.<Employees>lambdaQuery()
+                .eq(Employees::getCompanyId, UserContext.get().getCompanyId())
+                .in(Employees::getPhoneNumber, phones));
+        if (CollUtil.isNotEmpty(exist)) {
+            List<String> repeat = exist.stream().map(Employees::getPhoneNumber).collect(Collectors.toList());
+            return Result.fail("以下手机号已存在：" + CollUtil.join(repeat, ","));
+        }
+        // 2. 批量写入
+        boolean ok = saveBatch(list);
+        return ok ? Result.success(true) : Result.fail("导入失败");
     }
 }
 

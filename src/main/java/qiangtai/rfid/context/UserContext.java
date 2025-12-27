@@ -26,10 +26,12 @@ public final class UserContext {
     public static class UserInfo {
         private final Integer userId;
         private final Integer companyId;
+        private final String companyName;
 
-        public UserInfo(Integer userId, Integer companyId) {
+        public UserInfo(Integer userId, Integer companyId, String companyName) {
             this.userId = userId;
             this.companyId = companyId;
+            this.companyName = companyName;
         }
     }
 }
