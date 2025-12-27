@@ -132,7 +132,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         list.forEach(employees -> {
             Integer departmentId = departNames.get(employees.getDepartmentName());
             if (departmentId == null) {
-                throw new BusinessException(10023, employees.getDepartmentName() +" 部门不存在");
+                throw new BusinessException(10023, employees.getDepartmentName() +" 部门不存在，请先确认公司下是否有该部门");
             }
             employees.setDepartmentId(departmentId);
         });
@@ -147,7 +147,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         }
         // 2. 批量写入
         boolean ok = saveBatch(list);
-        return ok ? Result.success(true) : Result.fail("导入失败");
+        return ok ? Result.success("导入记录总数:"+list.size()) : Result.fail("导入失败");
     }
 }
 

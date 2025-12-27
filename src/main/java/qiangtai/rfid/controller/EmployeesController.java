@@ -81,7 +81,7 @@ public class EmployeesController {
             }
             return employeesService.importExcel(listener.getSuccessList());
         } catch (Exception e) {
-            return Result.fail("导入异常：" + e.getMessage());
+            return Result.fail("导入异常:" + e.getMessage());
         }
     }
 
