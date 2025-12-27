@@ -12,8 +12,10 @@ import qiangtai.rfid.dto.req.AccessLogsSaveVO;
 import qiangtai.rfid.dto.req.AccessLogsUpdateVO;
 import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.entity.AccessLogs;
+import qiangtai.rfid.excel.req.AccessLogsExportQuery;
 import qiangtai.rfid.service.AccessLogsService;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 @RequestMapping("/accessLogs")
@@ -24,18 +26,13 @@ public class AccessLogsController {
     private final AccessLogsService accessLogsService;
     @GetMapping("/pageAccessLogs")
     @Operation(summary = "进出日志多,分页查看进出日志")
-    public Result<?> pageAccessLogs(AccessLogsQuery accessLogsQuery) {
+    public Result<?> pageAccessLogs(AccessLogsExportQuery accessLogsQuery) {
         return Result.success(accessLogsService.pageAccessLogs(accessLogsQuery));
     }
     @GetMapping("/listAccessLogs")
     @Operation(summary = "进出日志少,列表查看进出日志")
-    public Result<?> listAccessLogs() {
-        Integer companyId = UserContext.get().getCompanyId();
-        //平台看全部
-        if (companyId == -1){
-            return Result.success(accessLogsService.list());
-        }
-        return Result.success(accessLogsService.list(Wrappers.<AccessLogs>lambdaQuery().eq(AccessLogs::getCompanyId, companyId)));
+    public Result<?> listAccessLogs(AccessLogsExportQuery qo) {
+        return Result.success(accessLogsService.listAccessLogs(qo));
     }
 
     @PostMapping("/add")
@@ -54,5 +51,11 @@ public class AccessLogsController {
     @Operation(summary = "删除进出日志")
     public Result<?> deleteAccessLogs(@PathVariable Integer id) {
         return Result.success(accessLogsService.deleteAccessLogs(id));
+    }
+    //导出进出日志excel
+    @GetMapping("/export")
+    @Operation(summary = "导出进出日志 Excel")
+    public void exportAccessLogs(@Valid AccessLogsExportQuery qo, HttpServletResponse response) {
+        accessLogsService.export(response, qo);
     }
 }

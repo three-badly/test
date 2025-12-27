@@ -31,9 +31,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class LogAspect {
 
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
+    private final ObjectMapper objectMapper;
+
+    public LogAspect(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
     //注入 Spring 已经注册好 JavaTimeModule 的 ObjectMapper
-    @Autowired
-    private ObjectMapper objectMapper;
+
     /**
      * 定义一个切点
      */

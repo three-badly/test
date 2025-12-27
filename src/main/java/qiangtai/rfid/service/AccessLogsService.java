@@ -1,12 +1,13 @@
 package qiangtai.rfid.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import qiangtai.rfid.dto.req.AccessLogsQuery;
 import qiangtai.rfid.dto.req.AccessLogsSaveVO;
 import qiangtai.rfid.entity.AccessLogs;
 import com.baomidou.mybatisplus.extension.service.IService;
+import qiangtai.rfid.excel.req.AccessLogsExportQuery;
 
-import javax.validation.Valid;
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 /**
 * @author FEI
@@ -15,9 +16,13 @@ import javax.validation.Valid;
 */
 public interface AccessLogsService extends IService<AccessLogs> {
 
-    Page<AccessLogs> pageAccessLogs(AccessLogsQuery accessLogsQuery);
+    Page<AccessLogs> pageAccessLogs(AccessLogsExportQuery accessLogsQuery);
 
-    Boolean add(@Valid AccessLogsSaveVO accessLogsSaveVO);
+    Boolean add(AccessLogsSaveVO accessLogsSaveVO);
 
     Boolean deleteAccessLogs(Integer id);
+
+    void export(HttpServletResponse response, AccessLogsExportQuery qo);
+
+    List<AccessLogs> listAccessLogs(AccessLogsExportQuery qo);
 }

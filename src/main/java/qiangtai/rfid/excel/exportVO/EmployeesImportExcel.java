@@ -21,10 +21,7 @@ public class EmployeesImportExcel implements Serializable {
     @ExcelProperty("姓名")
     private String name;
 
-    @ExcelProperty("部门ID")
-    private String departmentId;
-
-    @ExcelProperty("部门名字")
+    @ExcelProperty("部门")
     private String departmentName;
 
     @Pattern(regexp = "\\d{4}-\\d{2}-\\d{2}", message = "入职日期格式必须为 yyyy-MM-dd")
