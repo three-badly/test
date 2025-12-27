@@ -1,37 +1,31 @@
-package qiangtai.rfid.entity;
+package qiangtai.rfid.dto.req;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.time.LocalDateTime;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.NonNull;
 import org.springframework.format.annotation.DateTimeFormat;
 
-/**
- * 门禁出入记录快照表
- * @TableName access_logs
- */
-@TableName(value ="access_logs")
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.time.LocalDateTime;
+
 @Data
-public class AccessLogs {
-    /**
-     * 自增主键
-     */
-    @TableId(type = IdType.AUTO)
-    @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private Long id;
+public class AccessLogsSaveVO {
 
     /**
      * 员工手机号 (ID)
      */
+    @NotEmpty(message = "员工手机号不能为空")
+    @Pattern(regexp = "^1[3-9]\\d{9}$", message = "手机号格式错误")
     private String phoneNumber;
 
     /**
      * 设备id
      */
+    @NotNull(message = "设备id不能为空")
     private Integer machineId;
 
     /**
@@ -52,6 +46,7 @@ public class AccessLogs {
     /**
      * 出入方向：进入/离开
      */
+    @NotEmpty(message = "出入方向不能为空")
     private String direction;
 
     /**
@@ -59,6 +54,7 @@ public class AccessLogs {
      */
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @NotNull(message = "员工刷卡时间不能为空")
     private LocalDateTime timestamp;
 
     /**

@@ -17,6 +17,7 @@ import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -27,7 +28,9 @@ import org.springframework.web.multipart.MultipartFile;
 public class LogAspect {
 
     private final static Logger LOG = LoggerFactory.getLogger(LogAspect.class);
-
+    //注入 Spring 已经注册好 JavaTimeModule 的 ObjectMapper
+    @Autowired
+    private ObjectMapper objectMapper;
     /**
      * 定义一个切点
      */
@@ -46,11 +49,11 @@ public class LogAspect {
         HttpServletRequest request = attributes.getRequest();
 
         // 不记录 Knife4j/SpringDoc 内部接口
-        if (request.getRequestURI().contains("/v3/api-docs") ||
+/*        if (request.getRequestURI().contains("/v3/api-docs") ||
                 request.getRequestURI().contains("/swagger-resources") ||
                 request.getRequestURI().contains("/doc.html")) {
             return;
-        }
+        }*/
         Signature signature = joinPoint.getSignature();
         String name = signature.getName();
 
@@ -79,15 +82,20 @@ public class LogAspect {
         String[] excludeProperties = {};
         // 使用Spring Boot默认的Jackson ObjectMapper替代fastjson
         try {
-            ObjectMapper objectMapper = new ObjectMapper();
+           /* ObjectMapper objectMapper = new ObjectMapper();
             objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             // 创建过滤器排除特定属性
             if (excludeProperties.length > 0) {
                 SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept(excludeProperties);
                 FilterProvider filters = new SimpleFilterProvider().addFilter("propertyFilter", filter);
                 objectMapper.setFilterProvider(filters);
-            }
-            LOG.info("请求参数: {}", objectMapper.writeValueAsString(arguments));
+            }*/
+            // 使用 Spring 注入的 ObjectMapper（已含 JavaTimeModule）
+            String json = objectMapper
+                    .setSerializationInclusion(JsonInclude.Include.NON_NULL)
+                    .writeValueAsString(arguments);
+            LOG.info("请求参数: {}", json);
+//            LOG.info("请求参数: {}", objectMapper.writeValueAsString(arguments));
         } catch (Exception e) {
             LOG.error("请求参数序列化失败: ", e);
         }

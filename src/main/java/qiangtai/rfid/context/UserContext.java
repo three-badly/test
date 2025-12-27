@@ -3,6 +3,10 @@ package qiangtai.rfid.context;
 
 import lombok.Getter;
 
+/**
+ * @author FEI
+ * &#064;description:  用户上下文
+ */
 public final class UserContext {
     private static final ThreadLocal<UserInfo> HOLDER = new ThreadLocal<>();
 

@@ -1,26 +1,22 @@
-package qiangtai.rfid.entity;
-
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-
-import java.time.LocalDateTime;
+package qiangtai.rfid.dto.rsp;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.time.LocalDateTime;
+
 /**
- * 门禁出入记录快照表
- * @TableName access_logs
- */
-@TableName(value ="access_logs")
+ * @author FEI
+ * @description 进出记录日志
+ * @date 2025/12/26
+ **/
 @Data
-public class AccessLogs {
+public class AccessLogsResultVO {
     /**
      * 自增主键
      */
-    @TableId(type = IdType.AUTO)
+
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 

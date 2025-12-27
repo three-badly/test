@@ -6,6 +6,11 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 import qiangtai.rfid.interceptor.TokenInterceptor;
 
+/**
+ * @author FEI
+ *
+ * 拦截器配置
+ */
 @Configuration
 @RequiredArgsConstructor
 public class WebMvcConfig implements WebMvcConfigurer {

@@ -5,19 +5,21 @@
 <mapper namespace="qiangtai.rfid.mapper.AccessLogsMapper">
 
     <resultMap id="BaseResultMap" type="qiangtai.rfid.entity.AccessLogs">
-            <id property="id" column="id" jdbcType="BIGINT"/>
-            <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
-            <result property="machineId" column="machine_id" jdbcType="INTEGER"/>
-            <result property="employeeName" column="employee_name" jdbcType="VARCHAR"/>
-            <result property="deptName" column="dept_name" jdbcType="VARCHAR"/>
-            <result property="companyName" column="company_name" jdbcType="VARCHAR"/>
-            <result property="direction" column="direction" jdbcType="VARCHAR"/>
-            <result property="timestamp" column="timestamp" jdbcType="TIMESTAMP"/>
-            <result property="location" column="location" jdbcType="VARCHAR"/>
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="phoneNumber" column="phone_number" jdbcType="VARCHAR"/>
+        <result property="machineId" column="machine_id" jdbcType="INTEGER"/>
+        <result property="employeeName" column="employee_name" jdbcType="VARCHAR"/>
+        <result property="deptName" column="dept_name" jdbcType="VARCHAR"/>
+        <result property="companyName" column="company_name" jdbcType="VARCHAR"/>
+        <result property="direction" column="direction" jdbcType="VARCHAR"/>
+        <result property="timestamp" column="timestamp" jdbcType="TIMESTAMP"/>
+        <result property="location" column="location" jdbcType="VARCHAR"/>
+        <result property="companyId" column="company_id" jdbcType="INTEGER"/>
+        <result property="deptId" column="dept_id" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id,phone_number,machine_id,employee_name,dept_name,company_name,
-        direction,timestamp,location
+        direction,timestamp,location,company_id,dept_id
     </sql>
 </mapper>
