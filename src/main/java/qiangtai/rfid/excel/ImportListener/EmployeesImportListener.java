@@ -1,5 +1,6 @@
 package qiangtai.rfid.excel.ImportListener;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.date.DateUtil;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
@@ -27,14 +28,6 @@ public class EmployeesImportListener extends AnalysisEventListener<EmployeesImpo
     @Getter
     private final Map<Integer, String> errorMap = new LinkedHashMap<>();
 
-    private final Integer companyId;
-
-    private final String companyName;
-
-    public EmployeesImportListener() {
-        this.companyName = UserContext.get().getCompanyName();
-        this.companyId = UserContext.get().getCompanyId();
-    }
 
     @Override
     public void invoke(EmployeesImportExcel data, AnalysisContext context) {
@@ -48,22 +41,8 @@ public class EmployeesImportListener extends AnalysisEventListener<EmployeesImpo
             errorMap.put(row, sb.toString());
             return;
         }
-        //获取部门名字
 
-
-        /* 2. 转换实体 */
-        Employees e = new Employees();
-        e.setPhoneNumber(data.getPhoneNumber().trim());
-        e.setName(data.getName().trim());
-        e.setDepartmentId(data.getDepartmentId());
-        e.setCompanyId(companyId);
-        e.setDepartmentName(data.getDepartmentName());
-        e.setCompanyName(companyName);
-        e.setHireDate(DateUtil.parse(data.getHireDateStr(), "yyyy-MM-dd"));
-        e.setEmployeeType(data.getEmployeeType());
-        e.setStatus(data.getStatus());
-        e.setCreateTime(new Date());
-        successList.add(e);
+        successList.add(BeanUtil.copyProperties(data, Employees.class));
     }
 
     @Override

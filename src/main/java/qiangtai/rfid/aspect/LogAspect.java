@@ -82,12 +82,11 @@ public class LogAspect {
         }
 
         // 排除字段，敏感字段或太长的字段不显示：身份证、手机号、邮箱、密码等
-        String[] excludeProperties = {};
+//        String[] excludeProperties = {};
         // 使用Spring Boot默认的Jackson ObjectMapper替代fastjson
         try {
-           /* ObjectMapper objectMapper = new ObjectMapper();
-            objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
-            // 创建过滤器排除特定属性
+
+            /*// 创建过滤器排除特定属性
             if (excludeProperties.length > 0) {
                 SimpleBeanPropertyFilter filter = SimpleBeanPropertyFilter.serializeAllExcept(excludeProperties);
                 FilterProvider filters = new SimpleFilterProvider().addFilter("propertyFilter", filter);

@@ -124,9 +124,14 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         if (CollUtil.isEmpty(list)) {
             return Result.fail("导入数据为空");
         }
+        Integer companyId = UserContext.get().getCompanyId();
+        String companyName = UserContext.get().getCompanyName();
+        if (companyId == -1){
+            throw new BusinessException(10023, "请用公司对应的账号来导入员工");
+        }
         //赋值部门id
         Map<String, Integer> departNames = departmentsMapper.selectList(Wrappers.<Departments>lambdaQuery()
-                .eq(Departments::getCompanyId, UserContext.get().getCompanyId())
+                .eq(Departments::getCompanyId, companyId)
         ).stream().collect(Collectors.toMap(Departments::getDepartmentName, Departments::getId));
 
         list.forEach(employees -> {
@@ -135,6 +140,8 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
                 throw new BusinessException(10023, employees.getDepartmentName() +" 部门不存在，请先确认公司下是否有该部门");
             }
             employees.setDepartmentId(departmentId);
+            employees.setCompanyId(companyId);
+            employees.setCompanyName(companyName);
         });
         // 1. 按需做重复校验（例如手机号
         List<String> phones = list.stream().map(Employees::getPhoneNumber).collect(Collectors.toList());
