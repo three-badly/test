@@ -62,7 +62,6 @@ public class AccessLogsServiceImpl extends ServiceImpl<AccessLogsMapper, AccessL
     public Boolean add(AccessLogsSaveVO accessLogsSaveVO) {
         Employees employees = employeesMapper.selectOne(Wrappers.<Employees>lambdaQuery()
                 .eq(Employees::getPhoneNumber, accessLogsSaveVO.getPhoneNumber())
-                //todo系统管理员是否有权限？
                 .eq(UserContext.get().getCompanyId() != -1, Employees::getCompanyId, UserContext.get().getCompanyId())
         );
         if (employees == null) {

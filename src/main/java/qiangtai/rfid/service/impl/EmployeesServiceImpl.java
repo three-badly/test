@@ -65,7 +65,6 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         Long realId = Long.parseLong(id);
         boolean remove = this.remove(Wrappers.<Employees>lambdaQuery()
                 .eq(Employees::getId, realId)
-                //todo系统管理员是否有权限？
                 .eq(UserContext.get().getCompanyId() != -1, Employees::getCompanyId, UserContext.get().getCompanyId()));
         if (!remove) {
             throw new BusinessException(10023, "当前公司员工不存在");
@@ -83,7 +82,6 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
                         Employees::getPhoneNumber, employeesQuery.getPhoneNumber())
                 .eq(employeesQuery.getDepartmentId() != null,
                         Employees::getDepartmentId, employeesQuery.getDepartmentId())
-                // 本公司 todo系统管理员是否有权限？
                 .eq(UserContext.get().getCompanyId() != -1,
                         Employees::getCompanyId, UserContext.get().getCompanyId());
         Page<Employees> page1 = this.page(page, wrapper);
@@ -100,15 +98,14 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
     public Boolean updateEmployees(Employees employees1) {
         Employees employees = this.getOne(Wrappers.<Employees>lambdaQuery()
                 .eq(Employees::getId, employees1.getId())
-                //todo系统管理员是否有权限？
-                .eq(Employees::getCompanyId, UserContext.get().getCompanyId()));
+                .eq(UserContext.get().getCompanyId() != -1,Employees::getCompanyId, UserContext.get().getCompanyId()));
         if (employees == null) {
             throw new BusinessException(10023, "当前公司员工不存在");
         }
         //只要部门id更新，立即更新冗余字段部门名字
         if (!Objects.equals(employees1.getDepartmentId(), employees.getDepartmentId())) {
             //数据库提取部门名字
-            String departmentName = departmentsMapper.selectById(employees.getDepartmentId()).getDepartmentName();
+            String departmentName = departmentsMapper.selectById(employees1.getDepartmentId()).getDepartmentName();
             employees1.setDepartmentName(departmentName);
         }
 

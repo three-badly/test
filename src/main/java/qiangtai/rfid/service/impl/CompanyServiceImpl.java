@@ -24,15 +24,16 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CompanyServiceImpl  implements CompanyService {
-    
+public class CompanyServiceImpl implements CompanyService {
+
     private final CompanyMapper companyMapper;
-    
+
     @Override
     public List<Company> getCompanyList() {
-        return companyMapper.selectList(Wrappers.emptyWrapper());
+        return companyMapper.selectList(Wrappers.<Company>lambdaQuery()
+                .eq(UserContext.get().getCompanyId() != -1, Company::getId, UserContext.get().getCompanyId()));
     }
-    
+
     @Override
     public Boolean createCompany(CompanySaveVO companySaveVO) {
         //校验参数
@@ -40,12 +41,12 @@ public class CompanyServiceImpl  implements CompanyService {
         List<String> companyNames = companies.stream().map(Company::getCompanyName).collect(Collectors.toList());
         boolean contains = companyNames.contains(companySaveVO.getCompanyName());
         if (contains) {
-            throw new BusinessException(10010,"公司名称已存在");
+            throw new BusinessException(10010, "公司名称已存在");
         }
         int result = companyMapper.insert(BeanUtil.copyProperties(companySaveVO, Company.class));
         return result > 0;
     }
-    
+
     @Override
     public Boolean updateCompany(Company company) {
         //校验参数
@@ -53,13 +54,13 @@ public class CompanyServiceImpl  implements CompanyService {
         List<String> companyNames = companies.stream().map(Company::getCompanyName).collect(Collectors.toList());
         boolean contains = companyNames.contains(company.getCompanyName());
         if (contains) {
-            throw new BusinessException(10010,"公司名称已存在");
+            throw new BusinessException(10010, "公司名称已存在");
         }
 
         int result = companyMapper.updateById(company);
         return result > 0;
     }
-    
+
     @Override
     public Boolean deleteCompany(Integer id) {
 
@@ -71,8 +72,9 @@ public class CompanyServiceImpl  implements CompanyService {
     public Page<CompanyResultVO> pageCompany(CompanyQuery companyQuery) {
         //模糊查询
         Page<Company> companyPage = companyMapper.selectPage(new Page<>(companyQuery.getCurrent(), companyQuery.getSize()), Wrappers.<Company>lambdaQuery()
-                        .like(StringUtils.isNotBlank(companyQuery.getCompanyName()),
-                                Company::getCompanyName, companyQuery.getCompanyName()));
+                .like(StringUtils.isNotBlank(companyQuery.getCompanyName()),
+                        Company::getCompanyName, companyQuery.getCompanyName())
+                .eq(UserContext.get().getCompanyId() != -1, Company::getId, UserContext.get().getCompanyId()));
         List<CompanyResultVO> collect = companyPage.getRecords().stream().map(company -> BeanUtil.copyProperties(company, CompanyResultVO.class)).collect(Collectors.toList());
         Page<CompanyResultVO> companyResultVOPage = new Page<>();
         BeanUtil.copyProperties(companyPage, companyResultVOPage);

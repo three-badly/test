@@ -96,7 +96,11 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
 
     @Override
     public UserNameInfo addUser(UserSaveVO userSaveVO) {
-        //todo 谁能新加账号？
+        Integer companyId = UserContext.get().getCompanyId();
+        if (companyId != -1) {
+            throw new BusinessException(10008, "权限不足");
+        }
+
         if (userSaveVO.getCompanyId() == -1 || userSaveVO.getAccount().equals(Constant.ROOT_NAME)) {
             throw new BusinessException(10008, "名字不可为" + Constant.ROOT_NAME);
         }
@@ -214,7 +218,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
     @Override
     public Boolean updateMobileName(UserMobileNameUpadteVO userMobileNameUpadteVO) {
         //限定权限
-        if (!Objects.equals(UserContext.get().getUserId(), userMobileNameUpadteVO.getId())){
+        if (!Objects.equals(UserContext.get().getUserId(), userMobileNameUpadteVO.getId())) {
             throw new BusinessException(10008, "只能修改自己的信息");
         }
         //修改账号

@@ -42,7 +42,6 @@ public class EmployeesController {
     @Operation(summary = "员工少,列表查看员工")
     public Result<?> listEmployees() {
         Integer companyId = UserContext.get().getCompanyId();
-        //todo系统管理员是否有权限？
         List<Employees> list = employeesService.list(Wrappers.<Employees>lambdaQuery()
                 .eq(UserContext.get().getCompanyId() != -1,Employees::getCompanyId, companyId));
         return Result.success(BeanUtil.copyToList(list, EmployeesResultVO.class));
@@ -65,7 +64,6 @@ public class EmployeesController {
     public Result<?> deleteEmployees(@PathVariable String id) {
         return Result.success(employeesService.removeEmployeeById(id));
     }
-    //todo excel导入接口
     @PostMapping("/import")
     @Operation(summary = "Excel 批量导入员工")
     public Result<?> importEmployees(@RequestPart("file") MultipartFile file) {
