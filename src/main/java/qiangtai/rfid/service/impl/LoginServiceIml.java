@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -143,20 +144,42 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
 
         //平台管理员
         if (companyId == -1) {
-            Page<User> page1 = this.page(new Page<>(userQuery.getCurrent(), userQuery.getSize()), Wrappers
-                    .<User>lambdaQuery()
-                    //可模糊查询
-                    .like(StringUtils.isNotBlank(userQuery.getUsername()), User::getUsername, userQuery.getUsername()));
-            //过滤掉公司id为-1的平台管理员，并赋值公司名称
-            List<UserResultVO> collect = page1.getRecords().stream().filter(user -> user.getCompanyId() != -1).map(user -> {
-                UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
-                userResultVO.setCompanyName(companyMap.get(user.getCompanyId()));
-                return userResultVO;
-            }).collect(Collectors.toList());
-            BeanUtil.copyProperties(page1, page);
-            page.setRecords(collect);
-            return page;
+//             2. 用 MPJ 的 Lambda 连表
+            // 插件提供的构造器
+            return new MPJLambdaWrapper<User>(User.class)
+                    // user 表全部字段
+                    .selectAll(User.class)
+                    // 再拉 company_name
+                    .select(Company::getCompanyName)
+                    // 左连接
+                    .leftJoin(Company.class, Company::getId, User::getCompanyId)
+                    // 过滤掉平台管理员（company_id = -1）
+                    .ne(User::getCompanyId, -1)
+                    .like(StringUtils.isNotBlank(userQuery.getUsername()),
+                            // 模糊查用户名
+                            User::getUsername, userQuery.getUsername())
+                    // 模糊查公司名
+                    .like(StringUtils.isNotBlank(userQuery.getCompanyName()),
+                            Company::getCompanyName, userQuery.getCompanyName())
+                    // 插件自动 count + 分页
+                    .page(page, UserResultVO.class);
         }
+
+//            Page<User> page1 = this.page(new Page<>(userQuery.getCurrent(), userQuery.getSize()), Wrappers
+//                    .<User>lambdaQuery()
+//                    //可模糊查询
+//                    .like(StringUtils.isNotBlank(userQuery.getUsername()), User::getUsername, userQuery.getUsername())
+//            );
+//            //过滤掉公司id为-1的平台管理员，并赋值公司名称
+//            List<UserResultVO> collect = page1.getRecords().stream().filter(user -> user.getCompanyId() != -1).map(user -> {
+//                UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
+//                userResultVO.setCompanyName(companyMap.get(user.getCompanyId()));
+//                return userResultVO;
+//            }).collect(Collectors.toList());
+//            BeanUtil.copyProperties(page1, page);
+//            page.setRecords(collect);
+//            return page;}
+
         //公司管理员只筛选公司下的用户
         Page<User> page1 = this.page(new Page<>(userQuery.getCurrent(), userQuery.getSize()), Wrappers.<User>lambdaQuery()
                 .eq(User::getCompanyId, companyId)

@@ -23,7 +23,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "登录接口")
+@Tag(name = "用户接口")
 public class LoginController {
 
 
