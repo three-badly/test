@@ -16,6 +16,7 @@ public class ResultUtil {
     public static Result success(String msg) {
         Result result = new Result();
         result.setCode(0);
+        result.setSuccess(true);
         result.setMessage(msg);
         return result;
     }
@@ -23,6 +24,7 @@ public class ResultUtil {
     public static Result success(Object data) {
         Result result = new Result();
         result.setCode(0);
+        result.setSuccess(true);
         result.setData(data);
         return result;
     }
@@ -30,6 +32,7 @@ public class ResultUtil {
     public static Result successJsonStr(String data) {
         Result result = new Result();
         result.setCode(0);
+        result.setSuccess(true);
         result.setData(data);
         return result;
     }
@@ -42,6 +45,7 @@ public class ResultUtil {
         Result result = new Result();
         result.setCode(code);
         result.setMessage(message);
+        result.setSuccess(false);
         result.setData(data);
         return result;
     }

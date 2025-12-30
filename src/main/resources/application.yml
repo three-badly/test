@@ -27,5 +27,15 @@ spring:
 # 打开 MyBatis SQL 日志
 logging:
   level:
-    qiangtai.rfid.mapper: debug
-    org.mybatis: debug
+    qiangtai.rfid.mapper: debug      # SQL
+    qiangtai.rfid.service: info      # 业务
+    qiangtai.rfid.controller: info   # 请求响应
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file:    "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+  file:
+    name: logs/rfid/rfid.log          # 日志落盘路径（相对项目根）
+  logback:
+    rollingpolicy:
+      max-file-size: 100MB
+      max-history: 30

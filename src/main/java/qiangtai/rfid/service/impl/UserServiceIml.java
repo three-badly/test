@@ -3,7 +3,6 @@ package qiangtai.rfid.service.impl;
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.crypto.SecureUtil;
-import cn.hutool.jwt.JWTUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -16,10 +15,7 @@ import qiangtai.rfid.constant.Constant;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.LoginVO;
 
-import qiangtai.rfid.dto.req.UserMobileNameUpadteVO;
-import qiangtai.rfid.dto.req.UserQuery;
-import qiangtai.rfid.dto.req.UserSaveVO;
-import qiangtai.rfid.dto.req.UserUpdatePasswordVO;
+import qiangtai.rfid.dto.req.*;
 import qiangtai.rfid.dto.rsp.UserNameInfo;
 import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.entity.Company;
@@ -29,8 +25,8 @@ import qiangtai.rfid.mapper.CompanyMapper;
 import qiangtai.rfid.mapper.UserMapper;
 import qiangtai.rfid.service.CompanyService;
 import qiangtai.rfid.service.UserService;
+import qiangtai.rfid.utils.TokenUtil;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -47,14 +43,13 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
 
     @Override
     public UserResultVO login(LoginVO loginVO) {
-        log.info("用户登录：{}", loginVO);
-        String username = loginVO.getAccount();
+        String account = loginVO.getAccount();
         String password = loginVO.getPassword();
         User user = userMapper.selectOne(Wrappers.<User>lambdaQuery()
-                .eq(User::getAccount, username)
+                .eq(User::getAccount, account)
         );
         if (user == null) {
-            throw new BusinessException(10008, "用户不存在");
+            throw new BusinessException(10008, "账号不存在");
         }
         String salt = user.getSalt();
         //密码盐值
@@ -65,32 +60,17 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
         }
         UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
         Company company = new Company();
-        company.setCompanyName("平台管理员");
+        company.setCompanyName("");
         if (userResultVO.getCompanyId() != -1) {
             company = companyMapper.selectOne(Wrappers.<Company>lambdaQuery().eq(Company::getId, userResultVO.getCompanyId()));
             if (company == null) {
                 throw new BusinessException(10008, "公司不存在");
             }
         }
-        //生成token
         Company finalCompany = company;
-        Map<String, Object> map = new HashMap<String, Object>() {
-            private static final long serialVersionUID = 1L;
-
-            {
-                put(Constant.TOKEN_USER_ID, user.getId());
-                put(Constant.TOKEN_COMPANY_ID, user.getCompanyId());
-                put(Constant.TOKEN_COMPANY_NAME, finalCompany.getCompanyName());
-                put("expire_time", System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15);
-            }
-        };
-
-        String token = JWTUtil.createToken(map, Constant.TOKEN_SECRET.getBytes());
-
-
-        userResultVO.setToken(token);
-
-
+        //生成token
+        userResultVO.setToken(TokenUtil.createToken(user, finalCompany));
+        //获取公司名字
         userResultVO.setCompanyName(company.getCompanyName());
         return userResultVO;
     }
@@ -136,64 +116,29 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
 
     @Override
     public Page<UserResultVO> pageUser(UserQuery userQuery) {
-        List<Company> companyList = companyService.getCompanyList();
-        Map<Integer, String> companyMap = companyList.stream()
-                .collect(Collectors.toMap(Company::getId, Company::getCompanyName));
         Page<UserResultVO> page = new Page<>(userQuery.getCurrent(), userQuery.getSize());
+        // 当前登录人公司ID
         Integer companyId = UserContext.get().getCompanyId();
 
-        //平台管理员
-        if (companyId == -1) {
-//             2. 用 MPJ 的 Lambda 连表
-            // 插件提供的构造器
-            return new MPJLambdaWrapper<User>(User.class)
-                    // user 表全部字段
-                    .selectAll(User.class)
-                    // 再拉 company_name
-                    .select(Company::getCompanyName)
-                    // 左连接
-                    .leftJoin(Company.class, Company::getId, User::getCompanyId)
-                    // 过滤掉平台管理员（company_id = -1）
-                    .ne(User::getCompanyId, -1)
-                    .like(StringUtils.isNotBlank(userQuery.getUsername()),
-                            // 模糊查用户名
-                            User::getUsername, userQuery.getUsername())
-                    // 模糊查公司名
-                    .like(StringUtils.isNotBlank(userQuery.getCompanyName()),
-                            Company::getCompanyName, userQuery.getCompanyName())
-                    // 插件自动 count + 分页
-                    .page(page, UserResultVO.class);
-        }
-
-//            Page<User> page1 = this.page(new Page<>(userQuery.getCurrent(), userQuery.getSize()), Wrappers
-//                    .<User>lambdaQuery()
-//                    //可模糊查询
-//                    .like(StringUtils.isNotBlank(userQuery.getUsername()), User::getUsername, userQuery.getUsername())
-//            );
-//            //过滤掉公司id为-1的平台管理员，并赋值公司名称
-//            List<UserResultVO> collect = page1.getRecords().stream().filter(user -> user.getCompanyId() != -1).map(user -> {
-//                UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
-//                userResultVO.setCompanyName(companyMap.get(user.getCompanyId()));
-//                return userResultVO;
-//            }).collect(Collectors.toList());
-//            BeanUtil.copyProperties(page1, page);
-//            page.setRecords(collect);
-//            return page;}
-
-        //公司管理员只筛选公司下的用户
-        Page<User> page1 = this.page(new Page<>(userQuery.getCurrent(), userQuery.getSize()), Wrappers.<User>lambdaQuery()
-                .eq(User::getCompanyId, companyId)
-                //可模糊查询
-                .like(StringUtils.isNotBlank(userQuery.getUsername()), User::getUsername, userQuery.getUsername())
-        );
-        List<UserResultVO> collect = page1.getRecords().stream().map(user -> {
-            UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
-            userResultVO.setCompanyName(companyMap.get(user.getCompanyId()));
-            return userResultVO;
-        }).collect(Collectors.toList());
-        BeanUtil.copyProperties(page1, page);
-        page.setRecords(collect);
-        return page;
+        /* 公共连表 + 过滤 + 分页逻辑 */
+        return new MPJLambdaWrapper<User>(User.class)
+                // user 全部字段
+                .selectAll(User.class)
+                // 拉 company_name
+                .select(Company::getCompanyName)
+                .leftJoin(Company.class, Company::getId, User::getCompanyId)
+                // 永远过滤掉平台管理员
+                .ne(User::getCompanyId, -1)
+                // 普通企业管理员只能看本公司
+                .eq(companyId != -1, User::getCompanyId, companyId)
+                // 后续还可加模糊查询
+                .like(StringUtils.isNotBlank(userQuery.getUsername()),
+                        User::getUsername, userQuery.getUsername())
+                .like(StringUtils.isNotBlank(userQuery.getCompanyName()),
+                        Company::getCompanyName, userQuery.getCompanyName())
+                // 排序（可选，按 id 倒序）
+                .orderByDesc(User::getId)
+                .page(page, UserResultVO.class);
     }
 
     @Override
@@ -279,5 +224,15 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
         }
 
         return this.removeById(id);
+    }
+
+    @Override
+    public Boolean resetPassword(ResetPasswordVO resetPasswordVO) {
+        if (UserContext.get().getCompanyId() != -1){
+            throw new BusinessException(10008, "当前账号权限不足");
+        }
+        User user = this.getById(resetPasswordVO.getId());
+        user.setPassword(SecureUtil.sha256(resetPasswordVO.getPassword() + user.getSalt()));
+        return this.updateById(user);
     }
 }

@@ -8,6 +8,7 @@ public class BusinessException extends RuntimeException {
     private static final long serialVersionUID = 9215327422367136022L;
     private int code;
     private String snapshot;
+    private Boolean success;
 
     public BusinessException(ErrorCode errorCode) {
         super(errorCode.getMessage());
@@ -23,6 +24,7 @@ public class BusinessException extends RuntimeException {
     public BusinessException(int code, String message) {
         super(message);
         this.code = code;
+        this.success = false;
         this.snapshot = message;
     }
     public BusinessException(int code, String message, String snapshotFormat, Object... argArray) {

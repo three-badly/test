@@ -7,10 +7,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import qiangtai.rfid.dto.LoginVO;
 
-import qiangtai.rfid.dto.req.UserMobileNameUpadteVO;
-import qiangtai.rfid.dto.req.UserQuery;
-import qiangtai.rfid.dto.req.UserSaveVO;
-import qiangtai.rfid.dto.req.UserUpdatePasswordVO;
+import qiangtai.rfid.dto.req.*;
 import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.service.UserService;
 
@@ -32,47 +29,57 @@ public class UserController {
     @PostMapping("/login")
     @Operation(summary = "登录")
     public Result<?> login(@Valid @RequestBody LoginVO user) {
-        return Result.success(userService.login(user));
+        return Result.success(userService.login(user), "登陆成功！");
     }
 
     @PostMapping("/addUser")
     @Operation(summary = "添加公司用户")
     public Result<?> addUser(@Valid @RequestBody UserSaveVO userSaveVO) {
-        return Result.success(userService.addUser(userSaveVO));
+        return Result.success(userService.addUser(userSaveVO), "添加成功");
 
     }
 
     @GetMapping("/pageUser")
     @Operation(summary = "分页展示所有用户")
     public Result<?> pageUser(UserQuery userQuery) {
-        return Result.success(userService.pageUser(userQuery));
+        return Result.success(userService.pageUser(userQuery), "查询成功");
 
     }
 
     @GetMapping("/listUser")
     @Operation(summary = "列表展示所有用户")
     public Result<?> listUser() {
-        return Result.success(userService.listUser());
+        return Result.success(userService.listUser(), "查询成功");
     }
+
     @GetMapping("/{id}")
     @Operation(summary = "通过id获取用户信息")
     public Result<?> detail(@PathVariable Integer id) {
-        return Result.success(userService.detail(id));
+        return Result.success(userService.detail(id), "查询成功");
     }
 
     @PutMapping("/updatePassword")
     @Operation(summary = "修改密码")
     public Result<?> updatePassword(@Valid @RequestBody UserUpdatePasswordVO userUpdatePasswordVO) {
-        return Result.success(userService.updatePassword(userUpdatePasswordVO));
+        return Result.success(userService.updatePassword(userUpdatePasswordVO), "修改成功");
     }
+
     @PutMapping("/updateMobileName")
     @Operation(summary = "修改手机号，账号名，账号拥有者姓名")
     public Result<?> updateMobileName(@Valid @RequestBody UserMobileNameUpadteVO userMobileNameUpadteVO) {
-        return Result.success(userService.updateMobileName(userMobileNameUpadteVO));
+        return Result.success(userService.updateMobileName(userMobileNameUpadteVO), "修改成功");
     }
+
     @DeleteMapping("/{id}")
     @Operation(summary = "删除用户")
     public Result<?> deleteUser(@PathVariable("id") Integer id) {
-        return Result.success(userService.deleteUser(id));
+        return Result.success(userService.deleteUser(id), "删除成功");
     }
+
+    @PutMapping("/resetPassword")
+    @Operation(summary = "重置密码")
+    public Result<?> resetPassword(@Validated ResetPasswordVO resetPasswordVO) {
+        return Result.success(userService.resetPassword(resetPasswordVO), "重置密码成功");
+    }
+
 }
