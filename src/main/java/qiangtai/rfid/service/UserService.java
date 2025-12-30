@@ -11,11 +11,15 @@ import qiangtai.rfid.dto.rsp.UserNameInfo;
 import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.entity.User;
 
-import javax.validation.Valid;
 import java.util.List;
 
 
-public interface LoginService extends IService<User> {
+/**
+ * @author FEI
+ *
+ *
+ */
+public interface UserService extends IService<User> {
 
     UserResultVO login(LoginVO loginVO);
 

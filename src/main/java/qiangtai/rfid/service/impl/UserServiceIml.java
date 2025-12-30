@@ -26,9 +26,9 @@ import qiangtai.rfid.entity.Company;
 import qiangtai.rfid.entity.User;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.mapper.CompanyMapper;
-import qiangtai.rfid.mapper.LoginMapper;
+import qiangtai.rfid.mapper.UserMapper;
 import qiangtai.rfid.service.CompanyService;
-import qiangtai.rfid.service.LoginService;
+import qiangtai.rfid.service.UserService;
 
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +39,9 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
-        implements LoginService {
-    private final LoginMapper loginMapper;
+public class UserServiceIml extends ServiceImpl<UserMapper, User>
+        implements UserService {
+    private final UserMapper userMapper;
     private final CompanyMapper companyMapper;
     private final CompanyService companyService;
 
@@ -50,7 +50,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
         log.info("用户登录：{}", loginVO);
         String username = loginVO.getAccount();
         String password = loginVO.getPassword();
-        User user = loginMapper.selectOne(Wrappers.<User>lambdaQuery()
+        User user = userMapper.selectOne(Wrappers.<User>lambdaQuery()
                 .eq(User::getAccount, username)
         );
         if (user == null) {
@@ -113,7 +113,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
             throw new BusinessException(10008, "公司不存在");
         }
 
-        List<String> list = loginMapper.selectList(Wrappers.<User>lambdaQuery())
+        List<String> list = userMapper.selectList(Wrappers.<User>lambdaQuery())
                 .stream()
                 .map(User::getAccount)
                 .collect(Collectors.toList());
@@ -128,7 +128,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
         user.setSalt(salt);
         user.setPassword(defPassword);
 
-        loginMapper.insert(user);
+        userMapper.insert(user);
         UserNameInfo userNameInfo = BeanUtil.copyProperties(userSaveVO, UserNameInfo.class);
         userNameInfo.setCompanyName(company.getCompanyName());
         return userNameInfo;
@@ -224,7 +224,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
         if (!Objects.equals(userUpdatePasswordVO.getId(), userId)) {
             throw new BusinessException(10008, "只能修改自己的密码");
         }
-        User user = loginMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getId, userUpdatePasswordVO.getId()));
+        User user = userMapper.selectOne(Wrappers.<User>lambdaQuery().eq(User::getId, userUpdatePasswordVO.getId()));
         String salt = user.getSalt();
         //密码盐值
         String defPassword = SecureUtil.sha256(userUpdatePasswordVO.getOldPassword() + salt);
@@ -245,7 +245,7 @@ public class LoginServiceIml extends ServiceImpl<LoginMapper, User>
             throw new BusinessException(10008, "只能修改自己的信息");
         }
         //修改账号
-        List<String> list = loginMapper.selectList(Wrappers.<User>lambdaQuery()
+        List<String> list = userMapper.selectList(Wrappers.<User>lambdaQuery()
                         .ne(User::getId, userMobileNameUpadteVO.getId()))
                 .stream()
                 .map(User::getAccount)
