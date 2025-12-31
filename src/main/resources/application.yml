@@ -23,6 +23,9 @@ spring:
     url: jdbc:mysql://${MYSQL_URL:localhost:3306}/fgl_access_log?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8&useSSL=false
     username: ${MYSQL_USER:root}
     password: ${MYSQL_PASSWORD:root}
+  output:
+    ansi:
+      enabled: always
 # ======  解决 CORS 的关键：只让 springdoc 拦文档路径  ======
 springdoc:
   webmvc:
@@ -37,7 +40,7 @@ logging:
     qiangtai.rfid.config: debug  # 配置
     org.springframework.web.filter.CorsFilter: debug  # CORS
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr([%thread]){magenta} %clr(%-5level){highlight} %clr(%logger{36}){cyan} - %msg%n"
     file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   file:
     name: logs/rfid/rfid.log          # 日志落盘路径（相对项目根）

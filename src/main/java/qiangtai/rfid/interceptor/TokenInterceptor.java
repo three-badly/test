@@ -29,6 +29,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"msg\":\"token无效\"}");
+            log.warn("【TokenInterceptor】token无效");
             return false;
         }
         token = token.substring(7);
@@ -37,6 +38,7 @@ public class TokenInterceptor implements HandlerInterceptor {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"msg\":\"token无效\"}");
+            log.warn("【TokenInterceptor】token无效");
             return false;
         }
 
@@ -57,7 +59,7 @@ public class TokenInterceptor implements HandlerInterceptor {
     public void afterCompletion(HttpServletRequest request,
                                 HttpServletResponse response,
                                 Object handler,
-                                Exception ex) throws Exception {
+                                Exception ex) {
         // 请求结束务必清理，防止线程复用导致串号
 
         UserContext.clear();
