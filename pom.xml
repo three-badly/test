@@ -133,7 +133,7 @@
                 <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>qiangtai.rfid.RfidApplication</mainClass>
-                    <skip>true</skip>
+                    <skip>false</skip>
                 </configuration>
                 <executions>
                     <execution>
