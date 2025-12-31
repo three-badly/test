@@ -84,9 +84,9 @@
         </dependency>
         <!--日志增强包-->
         <dependency>
-            <groupId>com.github.xiaoymin</groupId>
+            <groupId>com.github.xingfudeshi</groupId>
             <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
-            <version>4.4.0</version>
+            <version>4.6.0</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

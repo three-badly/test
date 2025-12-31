@@ -23,16 +23,22 @@ spring:
     url: jdbc:mysql://${MYSQL_URL:localhost:3306}/fgl_access_log?useUnicode=true&characterEncoding=utf-8&allowMultiQueries=true&serverTimezone=GMT%2B8&useSSL=false
     username: ${MYSQL_USER:root}
     password: ${MYSQL_PASSWORD:root}
-
+# ======  解决 CORS 的关键：只让 springdoc 拦文档路径  ======
+springdoc:
+  webmvc:
+    paths-to-match: /v3/api-docs/**,/swagger-ui/**,/doc.html
 # 打开 MyBatis SQL 日志
 logging:
   level:
     qiangtai.rfid.mapper: debug      # SQL
     qiangtai.rfid.service: info      # 业务
     qiangtai.rfid.controller: info   # 请求响应
+    org.springframework.web.cors: debug
+    qiangtai.rfid.config: debug  # 配置
+    org.springframework.web.filter.CorsFilter: debug  # CORS
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
-    file:    "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
   file:
     name: logs/rfid/rfid.log          # 日志落盘路径（相对项目根）
   logback:
