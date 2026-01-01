@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import qiangtai.rfid.context.UserContext;
@@ -27,7 +28,7 @@ public class DepartmentsController {
 
     @GetMapping("/pageDepartments")
     @Operation(summary = "部门多,分页查看部门")
-    public Result<?> pageDepartments(DepartmentQuery departmentQuery) {
+    public Result<?> pageDepartments(@ParameterObject DepartmentQuery departmentQuery) {
         return Result.success(departmentsService.pageDepartments(departmentQuery));
     }
     @GetMapping("/listDepartments")
@@ -43,7 +44,7 @@ public class DepartmentsController {
 
     @PostMapping("/add")
     @Operation(summary = "新增部门")
-    public Result<?> add(@Valid  @RequestBody DepartmentsSaveVO departmentsSaveVO) {
+    public Result<?> add(@Valid @RequestBody DepartmentsSaveVO departmentsSaveVO) {
         return Result.success(departmentsService.add(departmentsSaveVO));
     }
     @PutMapping("/update")

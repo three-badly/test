@@ -3,6 +3,7 @@ package qiangtai.rfid.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import qiangtai.rfid.dto.LoginVO;
@@ -41,7 +42,7 @@ public class UserController {
 
     @GetMapping("/pageUser")
     @Operation(summary = "分页展示所有用户")
-    public Result<?> pageUser(UserQuery userQuery) {
+    public Result<?> pageUser(@ParameterObject UserQuery userQuery) {
         return Result.success(userService.pageUser(userQuery), "查询成功");
 
     }
@@ -78,7 +79,7 @@ public class UserController {
 
     @PutMapping("/resetPassword")
     @Operation(summary = "重置密码")
-    public Result<?> resetPassword(@Validated ResetPasswordVO resetPasswordVO) {
+    public Result<?> resetPassword(@Validated @ParameterObject ResetPasswordVO resetPasswordVO) {
         return Result.success(userService.resetPassword(resetPasswordVO), "重置密码成功");
     }
 

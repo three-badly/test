@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.AccessLogsQuery;
@@ -26,12 +27,12 @@ public class AccessLogsController {
     private final AccessLogsService accessLogsService;
     @GetMapping("/pageAccessLogs")
     @Operation(summary = "进出日志多,分页查看进出日志")
-    public Result<?> pageAccessLogs(AccessLogsExportQuery accessLogsQuery) {
+    public Result<?> pageAccessLogs(@ParameterObject AccessLogsExportQuery accessLogsQuery) {
         return Result.success(accessLogsService.pageAccessLogs(accessLogsQuery));
     }
     @GetMapping("/listAccessLogs")
     @Operation(summary = "进出日志少,列表查看进出日志")
-    public Result<?> listAccessLogs(AccessLogsExportQuery qo) {
+    public Result<?> listAccessLogs(@ParameterObject AccessLogsExportQuery qo) {
         return Result.success(accessLogsService.listAccessLogs(qo));
     }
 
@@ -55,7 +56,7 @@ public class AccessLogsController {
     //导出进出日志excel
     @GetMapping("/export")
     @Operation(summary = "导出进出日志 Excel")
-    public void exportAccessLogs(@Valid AccessLogsExportQuery qo, HttpServletResponse response) {
+    public void exportAccessLogs(@Valid @ParameterObject AccessLogsExportQuery qo, HttpServletResponse response) {
         accessLogsService.export(response, qo);
     }
 }

@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -35,7 +36,7 @@ public class EmployeesController {
     private final EmployeesService employeesService;
     @GetMapping("/pageEmployees")
     @Operation(summary = "员工多,分页查看员工")
-    public Result<?> pageEmployees(EmployeesQuery employeesQuery) {
+    public Result<?> pageEmployees(@ParameterObject EmployeesQuery employeesQuery) {
         return Result.success(employeesService.pageEmployees(employeesQuery));
     }
     @GetMapping("/listEmployees")

@@ -3,6 +3,7 @@ package qiangtai.rfid.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import qiangtai.rfid.context.UserContext;
@@ -24,7 +25,7 @@ public class DeviceController {
 
     @GetMapping("/pageDevice")
     @Operation(summary = "设备多,分页查看设备")
-    public Result<?> pageDevice(@Valid DevicesQueryVO devicesQueryVO) {
+    public Result<?> pageDevice(@Valid @ParameterObject DevicesQueryVO devicesQueryVO) {
         return Result.success(devicesService.pageDevice(devicesQueryVO));
     }
 
