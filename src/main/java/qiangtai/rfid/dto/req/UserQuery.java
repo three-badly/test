@@ -3,7 +3,7 @@ package qiangtai.rfid.dto.req;
 import lombok.Data;
 
 @Data
-public class UserQuery extends PageRequst{
+public class UserQuery extends PageRequest {
     /**
      * 账号持有人名字模糊查询
      */

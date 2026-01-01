@@ -5,7 +5,9 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import qiangtai.rfid.context.UserContext;
@@ -49,13 +51,16 @@ public class AccessLogsServiceImpl extends ServiceImpl<AccessLogsMapper, AccessL
     public Page<AccessLogs> pageAccessLogs(AccessLogsExportQuery qo) {
         Page<AccessLogs> page = new Page<>(qo.getCurrent(), qo.getSize());
         //平台看全部
-        return this.page(page, Wrappers.<AccessLogs>lambdaQuery()
+        return this.page(page, lambdaQueryCondition(qo));
+    }
+
+    public LambdaQueryWrapper<AccessLogs> lambdaQueryCondition(AccessLogsExportQuery qo) {
+        return Wrappers.<AccessLogs>lambdaQuery()
                 .like(StrUtil.isNotBlank(qo.getPhoneNumber()), AccessLogs::getPhoneNumber, qo.getPhoneNumber())
                 .like(StrUtil.isNotBlank(qo.getDeptName()), AccessLogs::getDeptName, qo.getDeptName())
                 .between(AccessLogs::getTimestamp, qo.getStartTime(), qo.getEndTime())
                 //管理员可查看所有日志
-                .eq(UserContext.get().getCompanyId() != -1, AccessLogs::getCompanyId, UserContext.get().getCompanyId())
-        );
+                .eq(UserContext.get().getCompanyId() != -1, AccessLogs::getCompanyId, UserContext.get().getCompanyId());
     }
 
     @Override
@@ -129,13 +134,10 @@ public class AccessLogsServiceImpl extends ServiceImpl<AccessLogsMapper, AccessL
     }
 
     @Override
-    public List<AccessLogs> listAccessLogs(AccessLogsExportQuery qo) {
-        return accessLogsMapper.selectList(Wrappers.<AccessLogs>lambdaQuery()
-                .like(StrUtil.isNotBlank(qo.getPhoneNumber()), AccessLogs::getPhoneNumber, qo.getPhoneNumber())
-                .like(StrUtil.isNotBlank(qo.getDeptName()), AccessLogs::getDeptName, qo.getDeptName())
-                .between(AccessLogs::getTimestamp, qo.getStartTime(), qo.getEndTime())
-                //管理员可查看所有日志
-                .eq(UserContext.get().getCompanyId() != -1, AccessLogs::getCompanyId, UserContext.get().getCompanyId())
+    public List<AccessLogs>
+    listAccessLogs(AccessLogsExportQuery qo) {
+        //管理员可查看所有日志
+        return accessLogsMapper.selectList(lambdaQueryCondition(qo)
         );
     }
 }

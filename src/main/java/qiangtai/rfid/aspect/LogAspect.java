@@ -111,7 +111,7 @@ public class LogAspect {
 
         // 排除字段，敏感字段或太长的字段不显示：身份证、手机号、邮箱、密码等
         try {
-            LOG.warn("返回结果: {}", objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsString(result));
+            LOG.info("返回结果: {}", objectMapper.setSerializationInclusion(JsonInclude.Include.NON_NULL).writeValueAsString(result));
         } catch (Exception e) {
             LOG.error("返回结果序列化失败: ", e);
         }

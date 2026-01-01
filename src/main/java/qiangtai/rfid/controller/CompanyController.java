@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -35,7 +36,7 @@ public class CompanyController {
     }
     @GetMapping("/pageCompany")
     @Operation(summary = "分页展示公司")
-    public Result<?> pageCompany(@Valid CompanyQuery companyQuery) {
+    public Result<?> pageCompany(@Valid @ParameterObject CompanyQuery companyQuery) {
         Page<CompanyResultVO> companies = companyService.pageCompany(companyQuery);
         return Result.success(companies);
     }

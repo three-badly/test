@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.NonNull;
 import org.springframework.format.annotation.DateTimeFormat;
-import qiangtai.rfid.dto.req.PageRequst;
+import qiangtai.rfid.dto.req.PageRequest;
 
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
@@ -17,7 +16,7 @@ import java.time.LocalDateTime;
  */
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class AccessLogsExportQuery extends PageRequst {
+public class AccessLogsExportQuery extends PageRequest {
 
     @Schema(description = "员工手机号，留空则查全部")
     private String phoneNumber;

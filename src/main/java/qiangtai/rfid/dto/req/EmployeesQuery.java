@@ -6,7 +6,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 @Data
-public class EmployeesQuery extends PageRequst{
+public class EmployeesQuery extends PageRequest {
     /**
      * 员工id
      */

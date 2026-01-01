@@ -45,13 +45,23 @@ public class TokenInterceptor implements HandlerInterceptor {
         JWT jwt = JWTUtil.parseToken(token);
         Map<String, Object> payload = jwt.getPayloads();
         // 安全写法
-        Integer userId    = ((Number) payload.get(Constant.TOKEN_USER_ID)).intValue();
+        Integer userId = ((Number) payload.get(Constant.TOKEN_USER_ID)).intValue();
         Integer companyId = ((Number) payload.get(Constant.TOKEN_COMPANY_ID)).intValue();
         String companyName = ((String) payload.get(Constant.TOKEN_COMPANY_NAME));
+        long expireTime = ((Number) payload.get(Constant.TOKEN_EXPIRE_TIME)).longValue();
+        //两天过期
+        if (expireTime < System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 13) {
+//            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+//            response.setContentType("application/json;charset=UTF-8");
+//            response.getWriter().write("{\"msg\":\"token已过期\"}");
+            log.warn("token已过期");
+//            拦截过期token
+//            return false;
+        }
 
         // 放入 ThreadLocal 上下文
-        UserContext.set(new UserContext.UserInfo(userId, companyId,companyName));
-        log.warn("【TokenInterceptor】ThreadLocal 已写入 userId={},companyId={},companyName={}", userId,companyId,companyName);
+        UserContext.set(new UserContext.UserInfo(userId, companyId, companyName));
+        log.info("【TokenInterceptor】ThreadLocal 已写入 userId={},companyId={},companyName={}", userId, companyId, companyName);
         return true;
     }
 

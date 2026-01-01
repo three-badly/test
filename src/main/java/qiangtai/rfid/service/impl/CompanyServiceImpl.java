@@ -4,6 +4,8 @@ import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import qiangtai.rfid.dto.req.CompanySaveVO;
 import qiangtai.rfid.dto.req.DepartmentsSaveVO;
 import qiangtai.rfid.dto.rsp.CompanyResultVO;
 import qiangtai.rfid.entity.Company;
+import qiangtai.rfid.entity.User;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.mapper.CompanyMapper;
 import qiangtai.rfid.service.CompanyService;
@@ -24,7 +27,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class CompanyServiceImpl implements CompanyService {
+public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> implements CompanyService{
 
     private final CompanyMapper companyMapper;
 
@@ -70,15 +73,13 @@ public class CompanyServiceImpl implements CompanyService {
 
     @Override
     public Page<CompanyResultVO> pageCompany(CompanyQuery companyQuery) {
+        Page<CompanyResultVO> page = new Page<>(companyQuery.getCurrent(), companyQuery.getSize());
         //模糊查询
-        Page<Company> companyPage = companyMapper.selectPage(new Page<>(companyQuery.getCurrent(), companyQuery.getSize()), Wrappers.<Company>lambdaQuery()
+      return new MPJLambdaWrapper<>(Company.class)
                 .like(StringUtils.isNotBlank(companyQuery.getCompanyName()),
                         Company::getCompanyName, companyQuery.getCompanyName())
-                .eq(UserContext.get().getCompanyId() != -1, Company::getId, UserContext.get().getCompanyId()));
-        List<CompanyResultVO> collect = companyPage.getRecords().stream().map(company -> BeanUtil.copyProperties(company, CompanyResultVO.class)).collect(Collectors.toList());
-        Page<CompanyResultVO> companyResultVOPage = new Page<>();
-        BeanUtil.copyProperties(companyPage, companyResultVOPage);
-        companyResultVOPage.setRecords(collect);
-        return companyResultVOPage;
+                .eq(UserContext.get().getCompanyId() != -1, Company::getId, UserContext.get().getCompanyId())
+                .page(page, CompanyResultVO.class);
+
     }
 }

@@ -5,8 +5,11 @@ import lombok.Data;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 
+/**
+ * @author FEI
+ */
 @Data
-public class PageRequst {
+public class PageRequest {
 
     /**
      * 当前页码

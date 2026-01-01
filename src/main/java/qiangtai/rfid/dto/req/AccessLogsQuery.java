@@ -2,12 +2,17 @@ package qiangtai.rfid.dto.req;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDateTime;
 
+/**
+ * @author FEI
+ */
+@EqualsAndHashCode(callSuper = true)
 @Data
-public class AccessLogsQuery extends PageRequst{
+public class AccessLogsQuery extends PageRequest {
     /**
      * 自增主键
      */

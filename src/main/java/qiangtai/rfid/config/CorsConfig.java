@@ -34,22 +34,3 @@ public class CorsConfig {
         return new CorsFilter(source);
     }
 }
-/*
-@Configuration
-public class CorsConfig {
-
-    @Bean
-    public CorsFilter corsFilter() {
-        CorsConfiguration cfg = new CorsConfiguration();
-        // 写死前端地址，避免 * 与 credentials 冲突
-        cfg.addAllowedOrigin("http://localhost:8080");
-        cfg.addAllowedHeader("*");
-        cfg.addAllowedMethod("*");
-        cfg.setAllowCredentials(true);
-        cfg.setMaxAge(3600L);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", cfg);
-        return new CorsFilter(source);
-    }
-}*/

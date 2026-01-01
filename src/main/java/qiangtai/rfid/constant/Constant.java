@@ -10,4 +10,5 @@ public class Constant {
     public static final String TOKEN_SECRET = "qwert";
     public static final String ROOT_NAME = "root";
     public static final String HEADER_TOKEN = "Authorization";
+    public static final String TOKEN_EXPIRE_TIME ="expire_time";
 }

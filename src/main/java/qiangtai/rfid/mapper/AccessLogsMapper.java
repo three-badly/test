@@ -1,5 +1,6 @@
 package qiangtai.rfid.mapper;
 
+import com.github.yulichang.base.MPJBaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import qiangtai.rfid.entity.AccessLogs;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
@@ -11,7 +12,7 @@ import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 * @Entity qiangtai.rfid.entity.AccessLogs
 */
 @Mapper
-public interface AccessLogsMapper extends BaseMapper<AccessLogs> {
+public interface AccessLogsMapper extends MPJBaseMapper<AccessLogs> {
 
 }
 

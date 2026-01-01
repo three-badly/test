@@ -18,7 +18,7 @@ public class TokenUtil {
                 put(Constant.TOKEN_ACCOUNT, user.getAccount());
                 put(Constant.TOKEN_USER_NAME, user.getUsername());
                 put(Constant.TOKEN_COMPANY_NAME, finalCompany.getCompanyName());
-                put("expire_time", System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15);
+                put(Constant.TOKEN_EXPIRE_TIME, System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 15);
             }
         };
 

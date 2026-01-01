@@ -5,7 +5,7 @@ import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.Data;
 
 @Data
-public class DepartmentQuery extends PageRequst {
+public class DepartmentQuery extends PageRequest {
     /**
      * 部门id
      */
