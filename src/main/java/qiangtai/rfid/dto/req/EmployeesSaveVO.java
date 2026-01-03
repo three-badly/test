@@ -1,5 +1,6 @@
 package qiangtai.rfid.dto.req;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -69,5 +70,30 @@ public class EmployeesSaveVO {
      * 公司名字
      */
     private String companyName;
+    /**
+     * EPC号
+     */
+    private String epc;
+    /**
+     * 职位
+     */
+
+    @TableField(value = "job_title")
+    private String jobTitle;
+
+    /**
+     * 工号
+     */
+    @TableField(value = "emp_no")
+    private String empNo;
+    /**
+     * 性别
+     */
+    private String sex;
+
+    /**
+     * 年龄
+     */
+    private Integer age;
 
 }

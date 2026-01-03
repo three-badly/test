@@ -1,6 +1,7 @@
 package qiangtai.rfid.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import java.util.Date;
@@ -11,7 +12,8 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 员工信息表
- * @TableName employees
+ * @author FEI
+ * &#064;TableName employees
  */
 @TableName(value ="employees")
 @Data
@@ -74,5 +76,29 @@ public class Employees {
      */
     private String companyName;
 
+    /**
+     * EPC号
+     */
+    private String epc;
+    /**
+     * 职位
+     */
 
+    @TableField(value = "job_title")
+    private String jobTitle;
+
+    /**
+     * 工号
+     */
+    @TableField(value = "emp_no")
+    private String empNo;
+    /**
+     * 性别
+     */
+    private String sex;
+
+    /**
+     * 年龄
+     */
+    private Integer age;
 }

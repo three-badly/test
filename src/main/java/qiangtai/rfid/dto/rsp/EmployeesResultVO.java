@@ -1,11 +1,15 @@
 package qiangtai.rfid.dto.rsp;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
+/**
+ * @author FEI
+ */
 @Data
 public class EmployeesResultVO {
     /**
@@ -65,4 +69,26 @@ public class EmployeesResultVO {
      * 公司名字
      */
     private String companyName;
+    /**
+     * EPC号
+     */
+    private String epc;
+    /**
+     * 职位
+     */
+    private String jobTitle;
+
+    /**
+     * 工号
+     */
+    private String empNo;
+    /**
+     * 性别
+     */
+    private String sex;
+
+    /**
+     * 年龄
+     */
+    private Integer age;
 }

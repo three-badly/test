@@ -25,7 +25,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "部门接口")
+@Tag(name = "部门管理接口")
 public class DepartmentsController {
     private final DepartmentsService departmentsService;
 

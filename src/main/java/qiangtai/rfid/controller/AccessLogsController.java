@@ -25,7 +25,7 @@ import javax.validation.Valid;
 @RequestMapping("/accessLogs")
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "进出日志接口")
+@Tag(name = "进出记录接口")
 public class AccessLogsController {
     private final AccessLogsService accessLogsService;
 

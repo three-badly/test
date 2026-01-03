@@ -21,7 +21,7 @@ import javax.validation.Valid;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "设备接口")
+@Tag(name = "设备管理接口")
 public class DeviceController {
 
     private final DevicesService devicesService;

@@ -3,6 +3,7 @@ package qiangtai.rfid.controller;
 import cn.hutool.core.bean.BeanUtil;
 import com.alibaba.excel.EasyExcel;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -34,17 +35,17 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "员工接口")
+@Tag(name = "人事管理接口")
 public class EmployeesController {
     private final EmployeesService employeesService;
     @GetMapping("/pageEmployees")
     @Operation(summary = "员工多,分页查看员工")
-    public Result<?> pageEmployees(@ParameterObject EmployeesQuery employeesQuery) {
+    public Result<Page<EmployeesResultVO>> pageEmployees(@ParameterObject EmployeesQuery employeesQuery) {
         return Result.success(employeesService.pageEmployees(employeesQuery));
     }
     @GetMapping("/listEmployees")
     @Operation(summary = "员工少,列表查看员工")
-    public Result<?> listEmployees() {
+    public Result<List<EmployeesResultVO>> listEmployees() {
         Integer companyId = UserContext.get().getCompanyId();
         List<Employees> list = employeesService.list(Wrappers.<Employees>lambdaQuery()
                 .eq(UserContext.get().getCompanyId() != -1,Employees::getCompanyId, companyId));
@@ -53,19 +54,19 @@ public class EmployeesController {
 
     @PostMapping("/add")
     @Operation(summary = "新增员工")
-    public Result<?> add(@Valid @RequestBody EmployeesSaveVO employeesSaveVO) {
+    public Result<Boolean> add(@Valid @RequestBody EmployeesSaveVO employeesSaveVO) {
         return Result.success(employeesService.add(employeesSaveVO));
     }
     @PutMapping("/update")
     @Operation(summary = "更新员工")
-    public Result<?> updateEmployees(@Valid @RequestBody EmployeesUpdateVO Employees) {
-        Employees employees1 = BeanUtil.copyProperties(Employees, Employees.class);
+    public Result<Boolean> updateEmployees(@Valid @RequestBody EmployeesUpdateVO employees) {
+        Employees employees1 = BeanUtil.copyProperties(employees, Employees.class);
 
         return Result.success(employeesService.updateEmployees(employees1));
     }
     @DeleteMapping("/{id}")
     @Operation(summary = "删除员工")
-    public Result<?> deleteEmployees(@PathVariable String id) {
+    public Result<Boolean> deleteEmployees(@PathVariable String id) {
         return Result.success(employeesService.removeEmployeeById(id));
     }
     @PostMapping("/import")

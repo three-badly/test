@@ -26,7 +26,7 @@ import java.util.List;
 @RequestMapping("/company")
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "公司接口")
+@Tag(name = "公司管理接口")
 public class CompanyController {
     
     private final CompanyService companyService;

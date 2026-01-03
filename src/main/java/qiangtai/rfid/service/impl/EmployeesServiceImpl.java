@@ -151,7 +151,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         }
         // 2. 批量写入
         boolean ok = saveBatch(list);
-        return ok ? Result.success("导入记录总数:"+list.size()) : Result.fail("导入失败");
+        return ok ? Result.success(true, "导入成功，记录总数:"+list.size()) : Result.fail("导入失败");
     }
 }
 
