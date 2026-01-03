@@ -23,12 +23,10 @@ import qiangtai.rfid.entity.User;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.mapper.CompanyMapper;
 import qiangtai.rfid.mapper.UserMapper;
-import qiangtai.rfid.service.CompanyService;
 import qiangtai.rfid.service.UserService;
 import qiangtai.rfid.utils.TokenUtil;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
@@ -39,7 +37,6 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
         implements UserService {
     private final UserMapper userMapper;
     private final CompanyMapper companyMapper;
-    private final CompanyService companyService;
 
     @Override
     public UserResultVO login(LoginVO loginVO) {
