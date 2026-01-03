@@ -28,14 +28,14 @@ public class TokenInterceptor implements HandlerInterceptor {
         if (token == null || !token.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
-            response.getWriter().write("{\"msg\":\"token无效\"}");
+            response.getWriter().write("{\"msg\":\"未携带token或token格式错误\"}");
             log.warn("【TokenInterceptor】token无效");
             return false;
         }
         token = token.substring(7);
 
         if (!JWTUtil.verify(token, Constant.TOKEN_SECRET.getBytes())) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"msg\":\"token无效\"}");
             log.warn("【TokenInterceptor】token无效");
