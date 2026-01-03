@@ -117,11 +117,20 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
     @Override
     public Page<UserResultVO> pageUser(UserQuery userQuery) {
         Page<UserResultVO> page = new Page<>(userQuery.getCurrent(), userQuery.getSize());
-        // 当前登录人公司ID
-        Integer companyId = UserContext.get().getCompanyId();
-
         /* 公共连表 + 过滤 + 分页逻辑 */
-        return new MPJLambdaWrapper<User>(User.class)
+        return getWrapper(userQuery).page(page, UserResultVO.class);
+    }
+
+    @Override
+    public List<UserResultVO> listUser(UserQuery userQuery) {
+        /* 公共连表 + 过滤 + 分页逻辑 */
+        return getWrapper(userQuery).list(UserResultVO.class);
+
+    }
+
+    public MPJLambdaWrapper<User> getWrapper(UserQuery userQuery) {
+        Integer companyId = UserContext.get().getCompanyId();
+        return new MPJLambdaWrapper<>(User.class)
                 // user 全部字段
                 .selectAll(User.class)
                 // 拉 company_name
@@ -137,29 +146,7 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
                 .like(StringUtils.isNotBlank(userQuery.getCompanyName()),
                         Company::getCompanyName, userQuery.getCompanyName())
                 // 排序（可选，按 id 倒序）
-                .orderByDesc(User::getId)
-                .page(page, UserResultVO.class);
-    }
-
-    @Override
-    public List<UserResultVO> listUser() {
-        //回显公司名称
-        List<Company> companyList = companyService.getCompanyList();
-        Map<Integer, String> companyMap = companyList.stream()
-                .collect(Collectors.toMap(Company::getId, Company::getCompanyName));
-        Integer companyId = UserContext.get().getCompanyId();
-        return this.list(Wrappers.<User>lambdaQuery()
-                        .eq(companyId != -1, User::getCompanyId, companyId)
-                ).stream()
-                //过滤掉公司id为-1的平台管理员
-                .filter(user -> user.getCompanyId() != -1)
-                //封装结果集
-                .map(user -> {
-                    UserResultVO userResultVO = BeanUtil.copyProperties(user, UserResultVO.class);
-                    userResultVO.setCompanyName(companyMap.get(user.getCompanyId()));
-                    return userResultVO;
-                }).collect(Collectors.toList());
-
+                .orderByDesc(User::getId);
     }
 
     @Override

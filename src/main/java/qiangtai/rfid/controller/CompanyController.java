@@ -20,6 +20,9 @@ import qiangtai.rfid.service.CompanyService;
 import javax.validation.Valid;
 import java.util.List;
 
+/**
+ * @author FEI
+ */
 @RequestMapping("/company")
 @RestController
 @RequiredArgsConstructor

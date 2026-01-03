@@ -19,17 +19,22 @@ import qiangtai.rfid.service.AccessLogsService;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+/**
+ * @author FEI
+ */
 @RequestMapping("/accessLogs")
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "进出日志接口")
 public class AccessLogsController {
     private final AccessLogsService accessLogsService;
+
     @GetMapping("/pageAccessLogs")
     @Operation(summary = "进出日志多,分页查看进出日志")
     public Result<?> pageAccessLogs(@ParameterObject AccessLogsExportQuery accessLogsQuery) {
         return Result.success(accessLogsService.pageAccessLogs(accessLogsQuery));
     }
+
     @GetMapping("/listAccessLogs")
     @Operation(summary = "进出日志少,列表查看进出日志")
     public Result<?> listAccessLogs(@ParameterObject AccessLogsExportQuery qo) {
@@ -41,22 +46,23 @@ public class AccessLogsController {
     public Result<?> add(@Valid @RequestBody AccessLogsSaveVO accessLogsSaveVO) {
         return Result.success(accessLogsService.add(accessLogsSaveVO));
     }
-/*    @PutMapping("/update")
+
+    @PutMapping("/update")
     @Operation(summary = "更新进出日志")
     public Result<?> updateAccessLogs(@Valid @RequestBody AccessLogsUpdateVO accessLogs) {
-        AccessLogs accessLogs1 = BeanUtil.copyProperties(accessLogs, AccessLogs.class);
+        return Result.success(accessLogsService.updateAccessLogs(accessLogs));
+    }
 
-        return Result.success(accessLogsService.updateAccessLogs(accessLogs1));
-    }*/
     @DeleteMapping("/{id}")
     @Operation(summary = "删除进出日志")
     public Result<?> deleteAccessLogs(@PathVariable Integer id) {
         return Result.success(accessLogsService.deleteAccessLogs(id));
     }
+
     //导出进出日志excel
     @GetMapping("/export")
     @Operation(summary = "导出进出日志 Excel")
-    public void exportAccessLogs(@Valid @ParameterObject AccessLogsExportQuery qo, HttpServletResponse response) {
+    public void exportAccessLogs(HttpServletResponse response, @Valid @ParameterObject AccessLogsExportQuery qo) {
         accessLogsService.export(response, qo);
     }
 }

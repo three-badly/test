@@ -14,8 +14,9 @@ import qiangtai.rfid.service.UserService;
 
 import javax.validation.Valid;
 
+
 /**
- * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
+ * @author FEI
  */
 @RequestMapping("/user")
 @RestController
@@ -44,13 +45,12 @@ public class UserController {
     @Operation(summary = "分页展示所有用户")
     public Result<?> pageUser(@ParameterObject UserQuery userQuery) {
         return Result.success(userService.pageUser(userQuery), "查询成功");
-
     }
 
     @GetMapping("/listUser")
     @Operation(summary = "列表展示所有用户")
-    public Result<?> listUser() {
-        return Result.success(userService.listUser(), "查询成功");
+    public Result<?> listUser(@ParameterObject UserQuery userQuery) {
+        return Result.success(userService.listUser(userQuery), "查询成功");
     }
 
     @GetMapping("/{id}")

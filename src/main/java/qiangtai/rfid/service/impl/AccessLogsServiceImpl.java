@@ -12,6 +12,7 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.AccessLogsSaveVO;
+import qiangtai.rfid.dto.req.AccessLogsUpdateVO;
 import qiangtai.rfid.entity.AccessLogs;
 import qiangtai.rfid.entity.Devices;
 import qiangtai.rfid.entity.Employees;
@@ -139,6 +140,14 @@ public class AccessLogsServiceImpl extends ServiceImpl<AccessLogsMapper, AccessL
         //管理员可查看所有日志
         return accessLogsMapper.selectList(lambdaQueryCondition(qo)
         );
+    }
+
+    @Override
+    public Boolean updateAccessLogs(AccessLogsUpdateVO accessLogs) {
+        AccessLogs accessLogs1 = BeanUtil.copyProperties(accessLogs, AccessLogs.class);
+        //todo 更新业务逻辑校验
+
+        return this.updateById(accessLogs1);
     }
 }
 

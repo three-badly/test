@@ -24,7 +24,7 @@ public interface UserService extends IService<User> {
 
     Page<UserResultVO> pageUser(UserQuery userQuery);
 
-    List<UserResultVO> listUser();
+    List<UserResultVO> listUser(UserQuery userQuery);
 
     Boolean updatePassword(UserUpdatePasswordVO userUpdatePasswordVO);
 

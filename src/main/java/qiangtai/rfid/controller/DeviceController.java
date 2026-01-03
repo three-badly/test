@@ -14,6 +14,9 @@ import qiangtai.rfid.service.DevicesService;
 
 import javax.validation.Valid;
 
+/**
+ * @author FEI
+ */
 @RequestMapping("/device")
 @RestController
 @RequiredArgsConstructor

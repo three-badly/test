@@ -18,6 +18,9 @@ import qiangtai.rfid.service.DepartmentsService;
 
 import javax.validation.Valid;
 
+/**
+ * @author FEI
+ */
 @RequestMapping("/departments")
 @RestController
 @RequiredArgsConstructor
