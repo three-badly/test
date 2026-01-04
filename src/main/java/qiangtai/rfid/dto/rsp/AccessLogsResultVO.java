@@ -82,4 +82,10 @@ public class AccessLogsResultVO {
      */
     @Schema(description = "部门ID")
     private Integer deptId;
+
+    @Schema(description = "员工EPC")
+    private String epc;
+
+    @Schema(description = "员工工号")
+    private String empNo;
 }

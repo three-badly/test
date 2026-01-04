@@ -5,14 +5,14 @@ import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.alibaba.excel.EasyExcel;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.AccessLogsSaveVO;
 import qiangtai.rfid.dto.req.AccessLogsUpdateVO;
+import qiangtai.rfid.dto.rsp.AccessLogsResultVO;
 import qiangtai.rfid.entity.AccessLogs;
 import qiangtai.rfid.entity.Devices;
 import qiangtai.rfid.entity.Employees;
@@ -49,14 +49,22 @@ public class AccessLogsServiceImpl extends ServiceImpl<AccessLogsMapper, AccessL
     }
 
     @Override
-    public Page<AccessLogs> pageAccessLogs(AccessLogsExportQuery qo) {
-        Page<AccessLogs> page = new Page<>(qo.getCurrent(), qo.getSize());
+    public Page<AccessLogsResultVO> pageAccessLogs(AccessLogsExportQuery qo) {
+        Page<AccessLogsResultVO> page = new Page<>(qo.getCurrent(), qo.getSize());
         //平台看全部
-        return this.page(page, lambdaQueryCondition(qo));
+        return lambdaQueryCondition(qo).page(page, AccessLogsResultVO.class);
     }
 
-    public LambdaQueryWrapper<AccessLogs> lambdaQueryCondition(AccessLogsExportQuery qo) {
-        return Wrappers.<AccessLogs>lambdaQuery()
+    /**
+     * 分页，列表条件公用
+     *
+     * @param qo
+     */
+    public MPJLambdaWrapper<AccessLogs> lambdaQueryCondition(AccessLogsExportQuery qo) {
+        return new MPJLambdaWrapper<>(AccessLogs.class)
+                .selectAll()
+                .select(Employees::getEpc, Employees::getEmpNo)
+                .leftJoin(Employees.class, Employees::getPhoneNumber, AccessLogs::getPhoneNumber)
                 .like(StrUtil.isNotBlank(qo.getPhoneNumber()), AccessLogs::getPhoneNumber, qo.getPhoneNumber())
                 .like(StrUtil.isNotBlank(qo.getDeptName()), AccessLogs::getDeptName, qo.getDeptName())
                 .between(AccessLogs::getTimestamp, qo.getStartTime(), qo.getEndTime())
@@ -104,7 +112,7 @@ public class AccessLogsServiceImpl extends ServiceImpl<AccessLogsMapper, AccessL
     @Override
     public void export(HttpServletResponse response, AccessLogsExportQuery qo) {
         // 1. 查当前公司数据
-        List<AccessLogs> list = listAccessLogs(qo);
+        List<AccessLogsResultVO> list = listAccessLogs(qo);
         if (CollUtil.isEmpty(list)) {
             throw new BusinessException(10035, "未查询到可导出数据");
         }
@@ -135,11 +143,9 @@ public class AccessLogsServiceImpl extends ServiceImpl<AccessLogsMapper, AccessL
     }
 
     @Override
-    public List<AccessLogs>
-    listAccessLogs(AccessLogsExportQuery qo) {
+    public List<AccessLogsResultVO> listAccessLogs(AccessLogsExportQuery qo) {
         //管理员可查看所有日志
-        return accessLogsMapper.selectList(lambdaQueryCondition(qo)
-        );
+        return lambdaQueryCondition(qo).list(AccessLogsResultVO.class);
     }
 
     @Override
