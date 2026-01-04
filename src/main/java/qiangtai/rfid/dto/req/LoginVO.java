@@ -1,4 +1,4 @@
-package qiangtai.rfid.dto;
+package qiangtai.rfid.dto.req;
 
 
 import io.swagger.v3.oas.annotations.media.Schema;

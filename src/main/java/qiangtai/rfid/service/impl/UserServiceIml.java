@@ -13,7 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import qiangtai.rfid.constant.Constant;
 import qiangtai.rfid.context.UserContext;
-import qiangtai.rfid.dto.LoginVO;
+import qiangtai.rfid.dto.req.LoginVO;
 
 import qiangtai.rfid.dto.req.*;
 import qiangtai.rfid.dto.rsp.UserNameInfo;

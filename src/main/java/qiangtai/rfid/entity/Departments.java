@@ -9,11 +9,12 @@ import lombok.Data;
 
 /**
  * 部门信息表
- * @TableName departments
+ * @author FEI
+ * &#064;TableName  departments
  */
 @TableName(value ="departments")
 @Data
-public class Departments implements Serializable {
+public class Departments {
     /**
      * 部门id
      */
@@ -39,7 +40,4 @@ public class Departments implements Serializable {
      * 负责人
      */
     private String deptLeaderName;
-
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }

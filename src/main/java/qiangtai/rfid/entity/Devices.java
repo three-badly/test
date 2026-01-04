@@ -12,11 +12,12 @@ import lombok.Data;
 
 /**
  * 门禁设备表
+ * @author FEI
  * @TableName devices
  */
 @TableName(value ="devices")
 @Data
-public class Devices implements Serializable {
+public class Devices {
     /**
      * 设备序列号/编号
      */
@@ -49,6 +50,4 @@ public class Devices implements Serializable {
      */
     private LocalDateTime lastHeartbeat;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
 }

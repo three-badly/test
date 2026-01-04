@@ -16,7 +16,7 @@ public class PageRequest {
      * 当前页码
      */
     @Schema(description = "当前页码")
-    private Integer current = 1;
+    private long current = 1;
 
     /**
      * 每页条数
@@ -24,5 +24,5 @@ public class PageRequest {
     @Schema(description = "每页条数")
     @Min(value = 1, message = "每页条数不能小于1")
     @Max(value = 20, message = "每页条数不能大于20")
-    private Integer size = 10;
+    private long size = 10;
 }

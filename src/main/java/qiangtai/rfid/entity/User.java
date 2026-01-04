@@ -24,8 +24,9 @@ import lombok.Data;
 
 import java.time.LocalDateTime;
 
+
 /**
- * @author <a href="mailto:chenxilzx1@gmail.com">theonefx</a>
+ * @author FEI
  */
 @Data
 @TableName("user")

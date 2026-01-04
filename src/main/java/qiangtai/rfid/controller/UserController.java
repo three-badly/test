@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import qiangtai.rfid.dto.LoginVO;
+import qiangtai.rfid.dto.req.LoginVO;
 
 import qiangtai.rfid.dto.req.*;
 import qiangtai.rfid.dto.result.Result;

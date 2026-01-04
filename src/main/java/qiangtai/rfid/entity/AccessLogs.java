@@ -12,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * 门禁出入记录快照表
+ * @author FEI
  * @TableName access_logs
  */
 @TableName(value ="access_logs")
