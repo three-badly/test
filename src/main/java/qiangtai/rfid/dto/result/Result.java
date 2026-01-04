@@ -1,5 +1,6 @@
 package qiangtai.rfid.dto.result;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,12 +13,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Result<T> {
-    
+
+    @Schema(description = "状态码")
     private Integer code;
-    
+
+    @Schema(description = "返回提示")
     private String message;
+
+    @Schema(description = "是否成功")
     private Boolean success;
 
+    @Schema(description = "返回数据")
     private T data;
     /* 快速工厂 */
     public static <T> Result<T> ok(T data) {

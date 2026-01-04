@@ -8,6 +8,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
+/**
+ * @author FEI
+ */
 @Schema(description = "用户保存请求对象")
 @Data
 public class UserSaveVO {

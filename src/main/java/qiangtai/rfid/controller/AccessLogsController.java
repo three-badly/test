@@ -1,18 +1,13 @@
 package qiangtai.rfid.controller;
 
-import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.web.bind.annotation.*;
-import qiangtai.rfid.context.UserContext;
-import qiangtai.rfid.dto.req.AccessLogsQuery;
 import qiangtai.rfid.dto.req.AccessLogsSaveVO;
 import qiangtai.rfid.dto.req.AccessLogsUpdateVO;
 import qiangtai.rfid.dto.result.Result;
-import qiangtai.rfid.entity.AccessLogs;
 import qiangtai.rfid.excel.req.AccessLogsExportQuery;
 import qiangtai.rfid.service.AccessLogsService;
 

@@ -2,6 +2,7 @@ package qiangtai.rfid.controller;
 
 import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +18,7 @@ import qiangtai.rfid.entity.Departments;
 import qiangtai.rfid.service.DepartmentsService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author FEI
@@ -31,35 +33,32 @@ public class DepartmentsController {
 
     @GetMapping("/pageDepartments")
     @Operation(summary = "部门多,分页查看部门")
-    public Result<?> pageDepartments(@ParameterObject DepartmentQuery departmentQuery) {
+    public Result<Page<Departments>> pageDepartments(@ParameterObject DepartmentQuery departmentQuery) {
         return Result.success(departmentsService.pageDepartments(departmentQuery));
     }
     @GetMapping("/listDepartments")
     @Operation(summary = "部门少,列表查看部门")
-    public Result<?> listDepartments() {
-        Integer companyId = UserContext.get().getCompanyId();
-        //平台看全部
-        if (companyId == -1){
-            return Result.success(departmentsService.list());
-        }
-        return Result.success(departmentsService.list(Wrappers.<Departments>lambdaQuery().eq(Departments::getCompanyId, companyId)));
+    public Result<List<Departments>> listDepartments() {
+
+        return Result.success(departmentsService.list(Wrappers.<Departments>lambdaQuery()
+                .eq(UserContext.get().getCompanyId() != -1,Departments::getCompanyId, UserContext.get().getCompanyId())));
     }
 
     @PostMapping("/add")
     @Operation(summary = "新增部门")
-    public Result<?> add(@Valid @RequestBody DepartmentsSaveVO departmentsSaveVO) {
+    public Result<Boolean> add(@Valid @RequestBody DepartmentsSaveVO departmentsSaveVO) {
         return Result.success(departmentsService.add(departmentsSaveVO));
     }
     @PutMapping("/update")
     @Operation(summary = "更新部门")
-    public Result<?> updateDepartments(@Valid @RequestBody DepartmentsUpdateVO departments) {
+    public Result<Boolean> updateDepartments(@Valid @RequestBody DepartmentsUpdateVO departments) {
         Departments departments1 = BeanUtil.copyProperties(departments, Departments.class);
 
         return Result.success(departmentsService.updateDepartments(departments1));
     }
     @DeleteMapping("/{id}")
     @Operation(summary = "删除部门")
-    public Result<?> deleteDepartments(@PathVariable Integer id) {
+    public Result<Boolean> deleteDepartments(@PathVariable Integer id) {
         return Result.success(departmentsService.removeDepartById(id));
     }
 }

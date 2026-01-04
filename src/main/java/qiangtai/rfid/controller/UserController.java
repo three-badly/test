@@ -1,5 +1,6 @@
 package qiangtai.rfid.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +11,12 @@ import qiangtai.rfid.dto.LoginVO;
 
 import qiangtai.rfid.dto.req.*;
 import qiangtai.rfid.dto.result.Result;
+import qiangtai.rfid.dto.rsp.UserNameInfo;
+import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.service.UserService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 
 /**
@@ -30,56 +34,56 @@ public class UserController {
 
     @PostMapping("/login")
     @Operation(summary = "登录")
-    public Result<?> login(@Valid @RequestBody LoginVO user) {
+    public Result<UserResultVO> login(@Valid @RequestBody LoginVO user) {
         return Result.success(userService.login(user), "登陆成功！");
     }
 
     @PostMapping("/addUser")
     @Operation(summary = "添加公司用户")
-    public Result<?> addUser(@Valid @RequestBody UserSaveVO userSaveVO) {
+    public Result<UserNameInfo> addUser(@Valid @RequestBody UserSaveVO userSaveVO) {
         return Result.success(userService.addUser(userSaveVO), "添加成功");
 
     }
 
     @GetMapping("/pageUser")
     @Operation(summary = "分页展示所有用户")
-    public Result<?> pageUser(@ParameterObject UserQuery userQuery) {
+    public Result<Page<UserResultVO>> pageUser(@ParameterObject UserQuery userQuery) {
         return Result.success(userService.pageUser(userQuery), "查询成功");
     }
 
     @GetMapping("/listUser")
     @Operation(summary = "列表展示所有用户")
-    public Result<?> listUser(@ParameterObject UserQuery userQuery) {
+    public Result<List<UserResultVO>> listUser(@ParameterObject UserQuery userQuery) {
         return Result.success(userService.listUser(userQuery), "查询成功");
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "通过id获取用户信息")
-    public Result<?> detail(@PathVariable Integer id) {
+    public Result<UserResultVO> detail(@PathVariable Integer id) {
         return Result.success(userService.detail(id), "查询成功");
     }
 
     @PutMapping("/updatePassword")
     @Operation(summary = "修改密码")
-    public Result<?> updatePassword(@Valid @RequestBody UserUpdatePasswordVO userUpdatePasswordVO) {
+    public Result<Boolean> updatePassword(@Valid @RequestBody UserUpdatePasswordVO userUpdatePasswordVO) {
         return Result.success(userService.updatePassword(userUpdatePasswordVO), "修改成功");
     }
 
     @PutMapping("/updateMobileName")
     @Operation(summary = "修改手机号，账号名，账号拥有者姓名")
-    public Result<?> updateMobileName(@Valid @RequestBody UserMobileNameUpadteVO userMobileNameUpadteVO) {
+    public Result<Boolean> updateMobileName(@Valid @RequestBody UserMobileNameUpadteVO userMobileNameUpadteVO) {
         return Result.success(userService.updateMobileName(userMobileNameUpadteVO), "修改成功");
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除用户")
-    public Result<?> deleteUser(@PathVariable("id") Integer id) {
+    public Result<Boolean> deleteUser(@PathVariable("id") Integer id) {
         return Result.success(userService.deleteUser(id), "删除成功");
     }
 
     @PutMapping("/resetPassword")
     @Operation(summary = "重置密码")
-    public Result<?> resetPassword(@Validated @ParameterObject ResetPasswordVO resetPasswordVO) {
+    public Result<Boolean> resetPassword(@Validated @ParameterObject ResetPasswordVO resetPasswordVO) {
         return Result.success(userService.resetPassword(resetPasswordVO), "重置密码成功");
     }
 

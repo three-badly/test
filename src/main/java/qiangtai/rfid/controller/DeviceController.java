@@ -1,5 +1,6 @@
 package qiangtai.rfid.controller;
 
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -10,9 +11,11 @@ import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
 import qiangtai.rfid.dto.req.DevicesSaveVO;
 import qiangtai.rfid.dto.result.Result;
+import qiangtai.rfid.entity.Devices;
 import qiangtai.rfid.service.DevicesService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * @author FEI
@@ -28,30 +31,25 @@ public class DeviceController {
 
     @GetMapping("/pageDevice")
     @Operation(summary = "设备多,分页查看设备")
-    public Result<?> pageDevice(@Valid @ParameterObject DevicesQueryVO devicesQueryVO) {
+    public Result<Page<Devices>> pageDevice(@Valid @ParameterObject DevicesQueryVO devicesQueryVO) {
         return Result.success(devicesService.pageDevice(devicesQueryVO));
     }
 
     @PostMapping("/add")
     @Operation(summary = "新增设备")
-    public Result<?> add(@Valid  @RequestBody DevicesSaveVO devicesSaveVO) {
+    public Result<Boolean> add(@Valid  @RequestBody DevicesSaveVO devicesSaveVO) {
         return Result.success(devicesService.add(devicesSaveVO));
     }
 
     @GetMapping("/listDevice")
     @Operation(summary = "设备少,列表查看设备")
-    public Result<?> listDevice() {
-        Integer companyId = UserContext.get().getCompanyId();
-        //平台看全部
-        if (companyId == -1){
-            return Result.success(devicesService.list());
-        }
+    public Result<List<Devices>> listDevice() {
         return Result.success(devicesService.listDevice());
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除设备")
-    public Result<?> deleteDevice(@PathVariable Integer id) {
-        return Result.success(devicesService.deleteDevice(id));
+    public Result<Boolean> deleteDevice(@PathVariable Integer id) {
+        return Result.success(devicesService.deleteDevice(id), "删除成功");
     }
 }

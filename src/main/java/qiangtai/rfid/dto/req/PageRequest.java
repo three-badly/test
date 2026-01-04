@@ -1,5 +1,6 @@
 package qiangtai.rfid.dto.req;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
 import javax.validation.constraints.Max;
@@ -14,11 +15,13 @@ public class PageRequest {
     /**
      * 当前页码
      */
+    @Schema(description = "当前页码")
     private Integer current = 1;
 
     /**
      * 每页条数
      */
+    @Schema(description = "每页条数")
     @Min(value = 1, message = "每页条数不能小于1")
     @Max(value = 20, message = "每页条数不能大于20")
     private Integer size = 10;

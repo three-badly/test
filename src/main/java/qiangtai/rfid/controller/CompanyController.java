@@ -33,35 +33,33 @@ public class CompanyController {
 
     @GetMapping("/getCompanyList")
     @Operation(summary = "获取公司列表")
-    public Result<?> getCompanyList() {
+    public Result<List<CompanyNameId>> getCompanyList() {
         List<Company> companies = companyService.getCompanyList();
         return Result.success(BeanUtil.copyToList(companies, CompanyNameId.class));
     }
     @GetMapping("/pageCompany")
     @Operation(summary = "分页展示公司")
-    public Result<?> pageCompany(@Valid @ParameterObject CompanyQuery companyQuery) {
-        Page<CompanyResultVO> companies = companyService.pageCompany(companyQuery);
-        return Result.success(companies);
+    public Result<Page<CompanyResultVO>> pageCompany(@Valid @ParameterObject CompanyQuery companyQuery) {
+        return Result.success(companyService.pageCompany(companyQuery));
     }
 
 
 
     @PostMapping("/add")
     @Operation(summary = "新增公司")
-    public Result<?> createCompany(@Valid @RequestBody CompanySaveVO company) {
-
+    public Result<Boolean> createCompany(@Valid @RequestBody CompanySaveVO company) {
         return Result.success(companyService.createCompany(company));
     }
 
     @PutMapping("/update")
     @Operation(summary = "更新公司信息")
-    public Result<?> updateCompany(@RequestBody Company company) {
+    public Result<Boolean> updateCompany(@RequestBody Company company) {
         return Result.success(companyService.updateCompany(company));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除公司")
-    public Result<?> deleteCompany(@PathVariable Integer id) {
+    public Result<Boolean> deleteCompany(@PathVariable Integer id) {
 
         return Result.success(companyService.deleteCompany(id));
     }

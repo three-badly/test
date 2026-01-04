@@ -2,10 +2,10 @@ package qiangtai.rfid.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import qiangtai.rfid.context.UserContext;
@@ -13,7 +13,6 @@ import qiangtai.rfid.dto.req.EmployeesQuery;
 import qiangtai.rfid.dto.req.EmployeesSaveVO;
 import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.dto.rsp.EmployeesResultVO;
-import qiangtai.rfid.entity.Company;
 import qiangtai.rfid.entity.Departments;
 import qiangtai.rfid.entity.Employees;
 import qiangtai.rfid.handler.exception.BusinessException;
@@ -75,22 +74,19 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
 
     @Override
     public Page<EmployeesResultVO> pageEmployees(EmployeesQuery employeesQuery) {
-        Page<Employees> page = new Page<>(employeesQuery.getCurrent(), employeesQuery.getSize());
-        LambdaQueryWrapper<Employees> wrapper = Wrappers.lambdaQuery();
+        Page<EmployeesResultVO> page = new Page<>(employeesQuery.getCurrent(), employeesQuery.getSize());
+        MPJLambdaWrapper<Employees> wrapper = new MPJLambdaWrapper<>(Employees.class);
         wrapper.like(StringUtils.hasText(employeesQuery.getName()), Employees::getName, employeesQuery.getName())
                 .like(StringUtils.hasText(employeesQuery.getPhoneNumber()),
                         Employees::getPhoneNumber, employeesQuery.getPhoneNumber())
                 .eq(employeesQuery.getDepartmentId() != null,
                         Employees::getDepartmentId, employeesQuery.getDepartmentId())
                 .eq(UserContext.get().getCompanyId() != -1,
-                        Employees::getCompanyId, UserContext.get().getCompanyId());
-        Page<Employees> page1 = this.page(page, wrapper);
-        Page<EmployeesResultVO> page2 = new Page<>();
-        BeanUtil.copyProperties(page1, page2);
-        //封装回字符串型态防止前端精度丢失
-        List<EmployeesResultVO> employeesResultVOS = BeanUtil.copyToList(page1.getRecords(), EmployeesResultVO.class);
-        page2.setRecords(employeesResultVOS);
-        return page2;
+                        Employees::getCompanyId, UserContext.get().getCompanyId())
+                .eq(employeesQuery.getDepartmentId() != null, Employees::getDepartmentId, employeesQuery.getDepartmentId())
+                .eq(employeesQuery.getStatus() != null, Employees::getStatus, employeesQuery.getStatus())
+        ;
+        return wrapper.page(page, EmployeesResultVO.class);
 
     }
 
@@ -98,7 +94,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
     public Boolean updateEmployees(Employees employees1) {
         Employees employees = this.getOne(Wrappers.<Employees>lambdaQuery()
                 .eq(Employees::getId, employees1.getId())
-                .eq(UserContext.get().getCompanyId() != -1,Employees::getCompanyId, UserContext.get().getCompanyId()));
+                .eq(UserContext.get().getCompanyId() != -1, Employees::getCompanyId, UserContext.get().getCompanyId()));
         if (employees == null) {
             throw new BusinessException(10023, "当前公司员工不存在");
         }
@@ -123,7 +119,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         }
         Integer companyId = UserContext.get().getCompanyId();
         String companyName = UserContext.get().getCompanyName();
-        if (companyId == -1){
+        if (companyId == -1) {
             throw new BusinessException(10023, "请用公司对应的账号来导入员工");
         }
         //赋值部门id
@@ -134,7 +130,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         list.forEach(employees -> {
             Integer departmentId = departNames.get(employees.getDepartmentName());
             if (departmentId == null) {
-                throw new BusinessException(10023, employees.getDepartmentName() +" 部门不存在，请先确认公司下是否有该部门");
+                throw new BusinessException(10023, employees.getDepartmentName() + " 部门不存在，请先确认公司下是否有该部门");
             }
             employees.setDepartmentId(departmentId);
             employees.setCompanyId(companyId);
@@ -151,7 +147,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         }
         // 2. 批量写入
         boolean ok = saveBatch(list);
-        return ok ? Result.success(true, "导入成功，记录总数:"+list.size()) : Result.fail("导入失败");
+        return ok ? Result.success(true, "导入成功，记录总数:" + list.size()) : Result.fail("导入失败");
     }
 }
 

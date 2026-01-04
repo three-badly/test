@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
 import qiangtai.rfid.dto.req.DevicesSaveVO;
+import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.entity.Devices;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.service.DevicesService;
@@ -17,13 +18,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 /**
-* @author FEI
-* @description 针对表【devices(门禁设备表)】的数据库操作Service实现
-* @createDate 2025-12-24 12:44:25
-*/
+ * @author FEI
+ * @description 针对表【devices(门禁设备表)】的数据库操作Service实现
+ * @createDate 2025-12-24 12:44:25
+ */
 @Service
 public class DevicesServiceImpl extends ServiceImpl<DevicesMapper, Devices>
-    implements DevicesService{
+        implements DevicesService {
 
 
     private final DevicesMapper devicesMapper;
@@ -35,7 +36,8 @@ public class DevicesServiceImpl extends ServiceImpl<DevicesMapper, Devices>
     @Override
     public List<Devices> listDevice() {
         Integer companyId = UserContext.get().getCompanyId();
-        return devicesMapper.selectList(Wrappers.<Devices>lambdaQuery().eq(Devices::getCompanyId, companyId));
+        return devicesMapper.selectList(Wrappers.<Devices>lambdaQuery()
+                .eq(companyId != -1, Devices::getCompanyId, companyId));
     }
 
     @Override
@@ -44,7 +46,7 @@ public class DevicesServiceImpl extends ServiceImpl<DevicesMapper, Devices>
 
         Page<Devices> page = new Page<>(devicesQueryVO.getCurrent(), devicesQueryVO.getSize());
         //平台查全部
-        if (companyId == -1){
+        if (companyId == -1) {
             return this.page(page, Wrappers.<Devices>emptyWrapper());
         }
         LambdaQueryWrapper<Devices> eq = Wrappers.<Devices>lambdaQuery().eq(Devices::getCompanyId, companyId);
@@ -66,9 +68,9 @@ public class DevicesServiceImpl extends ServiceImpl<DevicesMapper, Devices>
         //限定权限
         int delete = devicesMapper.delete(Wrappers.<Devices>lambdaQuery()
                 .eq(Devices::getId, id)
-                .eq(Devices::getCompanyId, companyId)
+                .eq(companyId != -1, Devices::getCompanyId, companyId)
         );
-        if (delete <= 0){
+        if (delete <= 0) {
             throw new BusinessException(10023, "不能删除非公司的设备");
         }
         return true;
