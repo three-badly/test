@@ -3,6 +3,7 @@ package qiangtai.rfid.handler;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -116,5 +117,23 @@ public class BaseExceptionHandler {
     public Result handleHttpRequestMethodNotSupportedException(HttpRequestMethodNotSupportedException e) {
         String msg = "该方法不支持" + StringUtils.substringBetween(e.getMessage(), "'", "'") + "请求方法";
         return ResultUtil.error(100802, msg);
+    }
+
+    /**
+     * Content-Type=application/json 但 body 不是合法 JSON（或根本没传 body）
+     */
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        // 1. 日志里保留原始异常，方便定位
+        log.error("请求体 JSON 格式错误", e);
+
+        // 2. 返回给前端的提示
+        String tip = "请求体必须是 JSON 格式，示例：\n" +
+                "{\n" +
+                "  \"departmentName\": \"研发部\",\n" +
+                "  \"deptLeaderName\": \"张三\"\n" +
+                "}";
+        return Result.error(40002, tip);
     }
 }

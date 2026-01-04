@@ -1,6 +1,7 @@
 package qiangtai.rfid.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.util.RandomUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -13,6 +14,9 @@ import qiangtai.rfid.service.DepartmentsService;
 import qiangtai.rfid.mapper.DepartmentsMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 /**
 * @author FEI
 * @description 针对表【departments(部门信息表)】的数据库操作Service实现
@@ -21,6 +25,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class DepartmentsServiceImpl extends ServiceImpl<DepartmentsMapper, Departments>
     implements DepartmentsService{
+
+    private final DepartmentsMapper departmentsMapper;
+
+    public DepartmentsServiceImpl(DepartmentsMapper departmentsMapper) {
+        this.departmentsMapper = departmentsMapper;
+    }
 
     @Override
     public Page<Departments> pageDepartments(DepartmentQuery departmentQuery) {
@@ -38,8 +48,8 @@ public class DepartmentsServiceImpl extends ServiceImpl<DepartmentsMapper, Depar
     @Override
     public Boolean add(DepartmentsSaveVO departmentsSaveVO) {
         Integer companyId = UserContext.get().getCompanyId();
-        if (companyId == null){
-            throw new BusinessException(1020, "公司不存在");
+        if (companyId == null || companyId == -1){
+            throw new BusinessException(1020, "公司不存在或不要用管理员账号新建部门");
         }
         //校验部门名称是否重复
         if (this.count(Wrappers.<Departments>lambdaQuery().eq(Departments::getDepartmentName, departmentsSaveVO.getDepartmentName())) > 0){
@@ -47,8 +57,18 @@ public class DepartmentsServiceImpl extends ServiceImpl<DepartmentsMapper, Depar
         }
         //存入当前线程公司id
         departmentsSaveVO.setCompanyId(companyId);
-
+        departmentsSaveVO.setDeptCode(getDeptCode(companyId));
         return this.save(BeanUtil.copyProperties(departmentsSaveVO, Departments.class));
+    }
+
+    public String getDeptCode(Integer companyId){
+        String s = "D-" + RandomUtil.randomNumbers(3);
+        List<String> codes = departmentsMapper.selectList(Wrappers.<Departments>lambdaQuery()
+                .eq(companyId != null, Departments::getCompanyId, companyId)).stream().map(Departments::getDeptCode).collect(Collectors.toList());
+        while (codes.contains(s)){
+            s = "D" + RandomUtil.randomNumbers(3);
+        }
+        return s;
     }
 
     @Override

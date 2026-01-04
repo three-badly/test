@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.IService;
 import qiangtai.rfid.dto.req.LoginVO;
 import qiangtai.rfid.dto.req.*;
-import qiangtai.rfid.dto.rsp.UserNameInfo;
 import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.entity.User;
 
@@ -20,7 +19,7 @@ public interface UserService extends IService<User> {
 
     UserResultVO login(LoginVO loginVO);
 
-    UserNameInfo addUser(UserSaveVO userSaveVO);
+    Boolean addUser(UserSaveVO userSaveVO);
 
     Page<UserResultVO> pageUser(UserQuery userQuery);
 

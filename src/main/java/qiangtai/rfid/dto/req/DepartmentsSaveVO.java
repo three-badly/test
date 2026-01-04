@@ -27,8 +27,7 @@ public class DepartmentsSaveVO {
     /**
      * 部门编码
      */
-    @Schema(description = "部门编码")
-    @NotEmpty(message = "部门编码不能为空")
+    @Schema(description = "部门编码(后端自动填充前端不需要给值)")
     private String deptCode;
 
     /**

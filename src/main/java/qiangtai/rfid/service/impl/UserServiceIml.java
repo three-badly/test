@@ -11,12 +11,11 @@ import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import qiangtai.rfid.constant.Constant;
+import org.springframework.transaction.annotation.Transactional;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.LoginVO;
 
 import qiangtai.rfid.dto.req.*;
-import qiangtai.rfid.dto.rsp.UserNameInfo;
 import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.entity.Company;
 import qiangtai.rfid.entity.User;
@@ -73,24 +72,31 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public UserNameInfo addUser(UserSaveVO userSaveVO) {
+    @Transactional(rollbackFor = Exception.class)
+    public Boolean addUser(UserSaveVO userSaveVO) {
         Integer companyId = UserContext.get().getCompanyId();
         if (companyId != -1) {
             throw new BusinessException(10008, "权限不足");
         }
-
-        if (userSaveVO.getCompanyId() == -1 || userSaveVO.getAccount().equals(Constant.ROOT_NAME)) {
-            throw new BusinessException(10008, "名字不可为" + Constant.ROOT_NAME);
-        }
-        //校验companyId是否存在
+        userSaveVO.setCompanyName(userSaveVO.getCompanyName().trim());
+        //校验公司名字是否存在
         Company company = companyMapper.selectOne(Wrappers.<Company>lambdaQuery()
-                .eq(Company::getId, userSaveVO.getCompanyId())
+                .eq(Company::getCompanyName, userSaveVO.getCompanyName())
         );
         if (company == null) {
-            throw new BusinessException(10008, "公司不存在");
+            //公司名字不存在，创建公司
+            int insert = companyMapper.insert(new Company().setCompanyName(userSaveVO.getCompanyName()));
+            if (insert <= 0) {
+                throw new BusinessException(10008, "公司创建失败");
+            }
         }
+        company = companyMapper.selectOne(Wrappers.<Company>lambdaQuery()
+                .eq(Company::getCompanyName, userSaveVO.getCompanyName())
+        );
+        userSaveVO.setCompanyId(company.getId());
 
-        List<String> list = userMapper.selectList(Wrappers.<User>lambdaQuery())
+        List<String> list = userMapper.selectList(Wrappers.<User>lambdaQuery()
+                        .eq(User::getCompanyId, company.getId()))
                 .stream()
                 .map(User::getAccount)
                 .collect(Collectors.toList());
@@ -105,10 +111,9 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
         user.setSalt(salt);
         user.setPassword(defPassword);
 
+        //保存用户
         userMapper.insert(user);
-        UserNameInfo userNameInfo = BeanUtil.copyProperties(userSaveVO, UserNameInfo.class);
-        userNameInfo.setCompanyName(company.getCompanyName());
-        return userNameInfo;
+        return true;
     }
 
     @Override

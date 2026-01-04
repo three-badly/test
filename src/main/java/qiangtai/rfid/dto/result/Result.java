@@ -29,7 +29,6 @@ public class Result<T> {
     public static <T> Result<T> ok(T data) {
         return new Result<>(ResultCode.SUCCESS, "success",true, data);
     }
-    public static <T> Result<T> ok() { return ok(null); }
 
     public static <T> Result<T> fail(String msg) {
         return new Result<>(ResultCode.ERROR, msg,false , null);
@@ -40,5 +39,8 @@ public class Result<T> {
 
     public static <T> Result<T> success(T data, String message) {
         return new Result<>(ResultCode.SUCCESS, message,true , data);
+    }
+    public static <T> Result<T> error(int code, String tip) {
+        return new Result<>(code, tip,false, null);
     }
 }

@@ -40,7 +40,7 @@ public class UserController {
 
     @PostMapping("/addUser")
     @Operation(summary = "添加公司用户")
-    public Result<UserNameInfo> addUser(@Valid @RequestBody UserSaveVO userSaveVO) {
+    public Result<Boolean> addUser(@Valid @RequestBody UserSaveVO userSaveVO) {
         return Result.success(userService.addUser(userSaveVO), "添加成功");
 
     }
