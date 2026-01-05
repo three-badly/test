@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -122,17 +123,19 @@ public class BaseExceptionHandler {
     /**
      * Content-Type=application/json 但 body 不是合法 JSON（或根本没传 body）
      */
-    @ExceptionHandler(HttpMessageNotReadableException.class)
+
+
+    @ExceptionHandler(BadSqlGrammarException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Result<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    public Result<?> handleBadSqlGrammar(BadSqlGrammarException  e) {
         // 1. 日志里保留原始异常，方便定位
-        log.error("请求体 JSON 格式错误", e);
+        log.error("没有修改数据，空字符串不进入修改", e);
 
         // 2. 返回给前端的提示
-        String tip = "请求体必须是 JSON 格式，示例：\n" +
+        String tip = "没有修改数据，空字符串不进入修改，示例：\n" +
                 "{\n" +
-                "  \"departmentName\": \"研发部\",\n" +
-                "  \"deptLeaderName\": \"张三\"\n" +
+                "  \"departmentName\": \"\",\n" +
+                "  \"deptLeaderName\": \"\"\n" +
                 "}";
         return Result.error(40002, tip);
     }

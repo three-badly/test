@@ -27,7 +27,7 @@ public interface UserService extends IService<User> {
 
     Boolean updatePassword(UserUpdatePasswordVO userUpdatePasswordVO);
 
-    Boolean updateMobileName(UserMobileNameUpadteVO userMobileNameUpadteVO);
+    Boolean updateMobileName(UserMobileNameUpdateVO userMobileNameUpdateVO);
 
     UserResultVO detail(Integer id);
 

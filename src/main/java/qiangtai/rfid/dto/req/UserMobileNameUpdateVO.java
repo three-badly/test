@@ -10,7 +10,7 @@ import javax.validation.constraints.NotNull;
  * @author FEI
  */
 @Data
-public class UserMobileNameUpadteVO {
+public class UserMobileNameUpdateVO {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     @NotNull(message = "用户id不能为空")
     @Schema(description = "用户ID")

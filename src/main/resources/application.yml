@@ -30,6 +30,12 @@ spring:
 springdoc:
   webmvc:
     paths-to-match: /v3/api-docs/**,/swagger-ui/**,/doc.html
+mybatis-plus:
+  mapper-locations: classpath*:/mapper/**/*.xml
+  global-config:
+    db-config:
+      insert-strategy: not_empty
+      update-strategy: not_empty
 # 打开 MyBatis SQL 日志
 logging:
   level:

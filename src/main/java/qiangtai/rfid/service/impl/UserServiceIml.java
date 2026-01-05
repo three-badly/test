@@ -2,6 +2,7 @@ package qiangtai.rfid.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import com.baomidou.mybatisplus.core.toolkit.StringUtils;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
@@ -153,6 +154,7 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
 
     @Override
     public Boolean updatePassword(UserUpdatePasswordVO userUpdatePasswordVO) {
+        
 
         Integer userId = UserContext.get().getUserId();
         if (!Objects.equals(userUpdatePasswordVO.getId(), userId)) {
@@ -173,29 +175,43 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
     }
 
     @Override
-    public Boolean updateMobileName(UserMobileNameUpadteVO userMobileNameUpadteVO) {
-        //限定权限
-        if (!Objects.equals(UserContext.get().getUserId(), userMobileNameUpadteVO.getId())) {
-            throw new BusinessException(10008, "只能修改自己的信息");
+    public Boolean updateMobileName(UserMobileNameUpdateVO userMobileNameUpdateVO) {
+        //限定权限 root不可改账号
+        if (UserContext.get().getCompanyId() == -1){
+            //管理员不可修改数据
+            if (Objects.equals(userMobileNameUpdateVO.getId(), UserContext.get().getUserId())){
+                throw new BusinessException(10008, "管理员数据不可修改");
+            }
+        }else {
+            if (!Objects.equals(UserContext.get().getUserId(), userMobileNameUpdateVO.getId())) {
+                throw new BusinessException(10008, "只能修改自己的信息");
+            }
         }
+
         //修改账号
         List<String> list = userMapper.selectList(Wrappers.<User>lambdaQuery()
-                        .ne(User::getId, userMobileNameUpadteVO.getId()))
+                        .ne(User::getId, userMobileNameUpdateVO.getId()))
                 .stream()
                 .map(User::getAccount)
                 .collect(Collectors.toList());
         //查看是否账号名重复
-        if (list.contains(userMobileNameUpadteVO.getAccount())) {
+        if (list.contains(userMobileNameUpdateVO.getAccount())) {
             throw new BusinessException(10008, "登录账号存在相同名，修改失败");
         }
         //修改手机号
 
         //修改账号持有人名字
-        return this.updateById(BeanUtil.copyProperties(userMobileNameUpadteVO, User.class));
+        return this.update(Wrappers.lambdaUpdate(User.class)
+                .set(StrUtil.isNotBlank(userMobileNameUpdateVO.getAccount()), User::getAccount, userMobileNameUpdateVO.getAccount())
+                .set(StrUtil.isNotBlank(userMobileNameUpdateVO.getUsername()), User::getUsername, userMobileNameUpdateVO.getUsername())
+                .set(StrUtil.isNotBlank(userMobileNameUpdateVO.getMobile()), User::getMobile, userMobileNameUpdateVO.getMobile())
+                .eq(User::getId, userMobileNameUpdateVO.getId())
+        );
     }
 
     @Override
     public UserResultVO detail(Integer id) {
+
         User user = this.getById(id);
         return BeanUtil.copyProperties(user, UserResultVO.class);
     }
@@ -205,6 +221,10 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
         //一级管理员（平台管理员）才能删除账号
         if (UserContext.get().getCompanyId() != -1) {
             throw new BusinessException(10008, "当前账号权限不足");
+        }else {
+            if (Objects.equals(id, UserContext.get().getUserId())){
+                throw new BusinessException(10008, "管理员数据不可修改");
+            }
         }
         //确定删除账号id是否存在
         User user = this.getById(id);

@@ -11,7 +11,6 @@ import qiangtai.rfid.dto.req.LoginVO;
 
 import qiangtai.rfid.dto.req.*;
 import qiangtai.rfid.dto.result.Result;
-import qiangtai.rfid.dto.rsp.UserNameInfo;
 import qiangtai.rfid.dto.rsp.UserResultVO;
 import qiangtai.rfid.service.UserService;
 
@@ -71,8 +70,8 @@ public class UserController {
 
     @PutMapping("/updateMobileName")
     @Operation(summary = "修改手机号，账号名，账号拥有者姓名")
-    public Result<Boolean> updateMobileName(@Valid @RequestBody UserMobileNameUpadteVO userMobileNameUpadteVO) {
-        return Result.success(userService.updateMobileName(userMobileNameUpadteVO), "修改成功");
+    public Result<Boolean> updateMobileName(@Valid @RequestBody UserMobileNameUpdateVO userMobileNameUpdateVO) {
+        return Result.success(userService.updateMobileName(userMobileNameUpdateVO), "修改成功");
     }
 
     @DeleteMapping("/{id}")
@@ -83,7 +82,7 @@ public class UserController {
 
     @PutMapping("/resetPassword")
     @Operation(summary = "重置密码")
-    public Result<Boolean> resetPassword(@Validated @ParameterObject ResetPasswordVO resetPasswordVO) {
+    public Result<Boolean> resetPassword(@Validated @RequestBody ResetPasswordVO resetPasswordVO) {
         return Result.success(userService.resetPassword(resetPasswordVO), "重置密码成功");
     }
 

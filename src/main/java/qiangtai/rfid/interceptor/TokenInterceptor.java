@@ -28,11 +28,17 @@ public class TokenInterceptor implements HandlerInterceptor {
                              Object handler) throws Exception {
 
         String token = request.getHeader(Constant.HEADER_TOKEN);
+
+        // 跳过OPTIONS请求
+        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+            return true;
+        }
+
         if (token == null || !token.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             response.setContentType("application/json;charset=UTF-8");
             response.getWriter().write("{\"msg\":\"未携带token或token格式错误\"}");
-            log.warn("【TokenInterceptor】token无效");
+            log.warn("未携带token或token格式错误");
             return false;
         }
         token = token.substring(7);
