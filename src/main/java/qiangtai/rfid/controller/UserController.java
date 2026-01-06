@@ -69,14 +69,14 @@ public class UserController {
     }
 
     @PutMapping("/updateMobileName")
-    @Operation(summary = "修改手机号，账号名，账号拥有者姓名")
+    @Operation(summary = "修改手机号，账号名，账号拥有者姓名，公司名字")
     public Result<Boolean> updateMobileName(@Valid @RequestBody UserMobileNameUpdateVO userMobileNameUpdateVO) {
         return Result.success(userService.updateMobileName(userMobileNameUpdateVO), "修改成功");
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "删除用户")
-    public Result<Boolean> deleteUser(@PathVariable("id") Integer id) {
+    public Result<Boolean> deleteUser(@PathVariable Integer id) {
         return Result.success(userService.deleteUser(id), "删除成功");
     }
 

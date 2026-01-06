@@ -199,7 +199,17 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
             throw new BusinessException(10008, "登录账号存在相同名，修改失败");
         }
         //修改手机号
-
+        //修改公司名字
+        if (StringUtils.isNotBlank(userMobileNameUpdateVO.getUsername())) {
+            User user = userMapper.selectById(userMobileNameUpdateVO.getId());
+            int company = companyMapper.update(Wrappers.<Company>lambdaUpdate()
+                    .eq(Company::getId,user.getCompanyId())
+                    .set(Company::getCompanyName,userMobileNameUpdateVO.getCompanyName())
+            );
+            if (company<=0){
+                throw new BusinessException(2030,"公司更名失败，公司不存在");
+            }
+        }
         //修改账号持有人名字
         return this.update(Wrappers.lambdaUpdate(User.class)
                 .set(StrUtil.isNotBlank(userMobileNameUpdateVO.getAccount()), User::getAccount, userMobileNameUpdateVO.getAccount())

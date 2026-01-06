@@ -33,4 +33,7 @@ public class UserMobileNameUpdateVO {
      */
     @Schema(description = "账号持有人名字")
     private String username;
+
+    @Schema(description = "公司名字")
+    private String companyName;
 }
