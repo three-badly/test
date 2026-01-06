@@ -210,6 +210,9 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
                 throw new BusinessException(2030,"公司更名失败，公司不存在");
             }
         }
+        if (StrUtil.isAllNotBlank(userMobileNameUpdateVO.getMobile(),userMobileNameUpdateVO.getAccount(),userMobileNameUpdateVO.getUsername())){
+            return true;
+        }
         //修改账号持有人名字
         return this.update(Wrappers.lambdaUpdate(User.class)
                 .set(StrUtil.isNotBlank(userMobileNameUpdateVO.getAccount()), User::getAccount, userMobileNameUpdateVO.getAccount())
