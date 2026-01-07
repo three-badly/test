@@ -52,7 +52,9 @@ public class DepartmentsServiceImpl extends ServiceImpl<DepartmentsMapper, Depar
             throw new BusinessException(1020, "公司不存在或不要用管理员账号新建部门");
         }
         //校验部门名称是否重复
-        if (this.count(Wrappers.<Departments>lambdaQuery().eq(Departments::getDepartmentName, departmentsSaveVO.getDepartmentName())) > 0){
+        if (this.count(Wrappers.<Departments>lambdaQuery()
+                        .eq(Departments::getCompanyId, companyId)
+                .eq(Departments::getDepartmentName, departmentsSaveVO.getDepartmentName())) > 0){
             throw new BusinessException(1021, "部门名称重复");
         }
         //存入当前线程公司id
@@ -86,8 +88,12 @@ public class DepartmentsServiceImpl extends ServiceImpl<DepartmentsMapper, Depar
 
     @Override
     public Boolean updateDepartments(Departments departments1) {
+
         //限定只可修改自己的公司的部门
         Integer companyId = UserContext.get().getCompanyId();
+        if (companyId == -1){
+            throw new BusinessException(1020, "请不要用一级管理员修改部门");
+        }
         //校验部门是否存在
         if (this.count(Wrappers.<Departments>lambdaQuery()
                 .eq(Departments::getId, departments1.getId())

@@ -23,6 +23,6 @@ public class PageRequest {
      */
     @Schema(description = "每页条数")
     @Min(value = 1, message = "每页条数不能小于1")
-    @Max(value = 20, message = "每页条数不能大于20")
+    @Max(value = 1000, message = "每页条数不能大于1000")
     private long size = 10;
 }

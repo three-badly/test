@@ -1,9 +1,12 @@
 package qiangtai.rfid.dto.req;
 
 import com.baomidou.mybatisplus.annotation.TableField;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 
 @Data
@@ -12,6 +15,7 @@ public class EmployeesUpdateVO {
      * 员工id
      */
     @Schema(description = "员工ID")
+    @NotNull(message = "员工ID不能为空")
     private String id;
 
     /**
@@ -42,6 +46,8 @@ public class EmployeesUpdateVO {
      * 入职日期
      */
     @Schema(description = "入职日期")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Date hireDate;
 
     /**
@@ -60,6 +66,8 @@ public class EmployeesUpdateVO {
      * 录入时间
      */
     @Schema(description = "录入时间")
+    @JsonFormat(pattern = "yyyy-MM-dd")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date createTime;
 
     /**

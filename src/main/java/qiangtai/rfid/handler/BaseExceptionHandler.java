@@ -132,11 +132,22 @@ public class BaseExceptionHandler {
         log.error("没有修改数据，空字符串不进入修改", e);
 
         // 2. 返回给前端的提示
-        String tip = "没有修改数据，空字符串不进入修改，示例：\n" +
+        String tip = "用户信息没有修改数据，空字符串不进入修改，示例：\n" +
                 "{\n" +
                 "  \"departmentName\": \"\",\n" +
                 "  \"deptLeaderName\": \"\"\n" +
                 "}";
-        return Result.error(40002, tip);
+        return Result.success(40002, tip);
     }
+    /**
+     * 捕获ID格式错误的数字转换异常
+     */
+    @ExceptionHandler(NumberFormatException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Result<?> handleNumberFormatException(NumberFormatException e) {
+        String message = "缺少必传id参数）";
+        log.error(message, e);
+        return ResultUtil.error(40005, message);
+    }
+
 }

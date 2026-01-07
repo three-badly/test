@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import qiangtai.rfid.constant.Constant;
 import qiangtai.rfid.context.UserContext;
-import qiangtai.rfid.handler.exception.BusinessException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -70,7 +69,8 @@ public class TokenInterceptor implements HandlerInterceptor {
 
         // 放入 ThreadLocal 上下文
         UserContext.set(new UserContext.UserInfo(userId, companyId, companyName));
-        log.info("【TokenInterceptor】ThreadLocal 已写入 userId={},companyId={},companyName={}", userId, companyId, companyName);
+        log.info("【TokenInterceptor】ThreadLocal 已写入 userId={},companyId={},companyName={},token = {}",
+                userId, companyId, companyName, "Bearer " + token);
         return true;
     }
 

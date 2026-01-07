@@ -200,7 +200,7 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
         }
         //修改手机号
         //修改公司名字
-        if (StringUtils.isNotBlank(userMobileNameUpdateVO.getUsername())) {
+        if (StringUtils.isNotBlank(userMobileNameUpdateVO.getCompanyName())) {
             User user = userMapper.selectById(userMobileNameUpdateVO.getId());
             int company = companyMapper.update(Wrappers.<Company>lambdaUpdate()
                     .eq(Company::getId,user.getCompanyId())
@@ -210,7 +210,7 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
                 throw new BusinessException(2030,"公司更名失败，公司不存在");
             }
         }
-        if (StrUtil.isAllNotBlank(userMobileNameUpdateVO.getMobile(),userMobileNameUpdateVO.getAccount(),userMobileNameUpdateVO.getUsername())){
+        if (StrUtil.isAllBlank(userMobileNameUpdateVO.getMobile(),userMobileNameUpdateVO.getAccount(),userMobileNameUpdateVO.getUsername())){
             return true;
         }
         //修改账号持有人名字

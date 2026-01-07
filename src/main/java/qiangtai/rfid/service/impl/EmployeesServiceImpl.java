@@ -2,6 +2,7 @@ package qiangtai.rfid.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -84,7 +85,7 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
                 .eq(UserContext.get().getCompanyId() != -1,
                         Employees::getCompanyId, UserContext.get().getCompanyId())
                 .eq(employeesQuery.getDepartmentId() != null, Employees::getDepartmentId, employeesQuery.getDepartmentId())
-                .eq(employeesQuery.getStatus() != null, Employees::getStatus, employeesQuery.getStatus())
+                .eq(StrUtil.isNotBlank(employeesQuery.getStatus()), Employees::getStatus, employeesQuery.getStatus())
         ;
         return wrapper.page(page, EmployeesResultVO.class);
 
@@ -98,11 +99,17 @@ public class EmployeesServiceImpl extends ServiceImpl<EmployeesMapper, Employees
         if (employees == null) {
             throw new BusinessException(10023, "当前公司员工不存在");
         }
-        //只要部门id更新，立即更新冗余字段部门名字
-        if (!Objects.equals(employees1.getDepartmentId(), employees.getDepartmentId())) {
-            //数据库提取部门名字
-            String departmentName = departmentsMapper.selectById(employees1.getDepartmentId()).getDepartmentName();
-            employees1.setDepartmentName(departmentName);
+        //此处前端传的事部门名字，立即更新部门id和冗余字段部门名字
+        if (StrUtil.isNotBlank(employees1.getDepartmentName())){
+            if (employees.getDepartmentName().equals(employees1.getDepartmentName())){
+                Integer id = departmentsMapper.selectOne(Wrappers.<Departments>lambdaQuery()
+                        .eq(Departments::getDepartmentName, employees1.getDepartmentName())
+                        .eq(UserContext.get().getCompanyId() != -1,
+                                Departments::getCompanyId, UserContext.get().getCompanyId())
+
+                ).getId();
+                employees1.setDepartmentId(id);
+            }
         }
 
         return this.updateById(employees1);

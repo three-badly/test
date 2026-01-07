@@ -39,7 +39,6 @@ public class DepartmentsController {
     @GetMapping("/listDepartments")
     @Operation(summary = "部门少,列表查看部门")
     public Result<List<Departments>> listDepartments() {
-
         return Result.success(departmentsService.list(Wrappers.<Departments>lambdaQuery()
                 .eq(UserContext.get().getCompanyId() != -1,Departments::getCompanyId, UserContext.get().getCompanyId())));
     }
