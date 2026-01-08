@@ -43,4 +43,7 @@ public class Result<T> {
     public static <T> Result<T> error(int code, String tip) {
         return new Result<>(code, tip,false, null);
     }
+    public static <T> Result<T> error(String tip) {
+        return new Result<>(ResultCode.ERROR, tip,false, null);
+    }
 }

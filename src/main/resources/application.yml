@@ -54,3 +54,8 @@ logging:
     rollingpolicy:
       max-file-size: 100MB
       max-history: 30
+rfid:
+  host: 192.168.1.42   # 读写器 IP
+  port: 9160             # 默认端口
+  antenna: ANT1          # 天线枚举 ANT1~ANT4
+  power: 30              # 功率 0-30 dBm

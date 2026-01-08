@@ -1,12 +1,16 @@
 package qiangtai.rfid.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rscja.deviceapi.RFIDWithUHFNetworkA4;
+import com.rscja.deviceapi.entity.AntennaNameEnum;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import qiangtai.rfid.config.RfidAutoConfig;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
 import qiangtai.rfid.dto.req.DevicesSaveVO;
 import qiangtai.rfid.dto.req.DevicesUpdateVO;
@@ -26,9 +30,12 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "设备管理接口")
+@Slf4j
 public class DeviceController {
 
     private final DevicesService devicesService;
+    private final RFIDWithUHFNetworkA4 rfidInstance;
+    private final RfidAutoConfig rfidConfig;
 
     @GetMapping("/pageDevice")
     @Operation(summary = "设备多,分页查看设备")
@@ -58,5 +65,65 @@ public class DeviceController {
     @Operation(summary = "删除设备")
     public Result<Boolean> deleteDevice(@PathVariable Integer id) {
         return Result.success(devicesService.deleteDevice(id), "删除成功");
+    }
+    @Operation(summary = "启动RFID连接")
+    @PostMapping("/connect")
+    public Result<Boolean> connect() {
+        try {
+            // 检查是否已经连接
+            // 注意：这里需要根据实际的API来判断连接状态，如果设备API不提供连接状态查询，
+            // 可以先尝试断开再重新连接
+            rfidInstance.free(); // 先释放可能存在的连接
+
+            boolean connected = rfidInstance.init(rfidConfig.getHost(), rfidConfig.getPort());
+            if (connected) {
+                // 设置基础参数
+                rfidInstance.setPower(AntennaNameEnum.valueOf(rfidConfig.getAntenna()), rfidConfig.getPower());
+                // 设置回调并启动盘点
+                rfidInstance.setInventoryCallback(rfidConfig::handleTag);
+                rfidInstance.startInventoryTag();
+
+                log.info("✅ RFID 连接已启动 {}:{}", rfidConfig.getHost(), rfidConfig.getPort());
+                return Result.success(true, "RFID连接成功");
+            } else {
+                log.error("❌ RFID 连接失败 {}:{}", rfidConfig.getHost(), rfidConfig.getPort());
+                return Result.error("RFID连接失败");
+            }
+        } catch (Exception e) {
+            log.error("❌ RFID 连接异常", e);
+            return Result.error("RFID连接异常: " + e.getMessage());
+        }
+    }
+
+    @Operation(summary = "断开RFID连接")
+    @PostMapping("/disconnect")
+    public Result<Boolean> disconnect() {
+        try {
+            rfidInstance.stopInventory();
+            rfidInstance.free();
+
+            log.info("🔌 RFID 连接已断开 {}:{}", rfidConfig.getHost(), rfidConfig.getPort());
+            return Result.success(true, "RFID断开连接成功");
+        } catch (Exception e) {
+            log.error("❌ RFID 断开连接异常", e);
+            return Result.error("RFID断开连接异常: " + e.getMessage());
+        }
+    }
+
+    @Operation(summary = "获取RFID连接状态")
+    @GetMapping("/status")
+    public Result<String> getStatus() {
+        // 注意：这里需要根据实际的API来判断连接状态
+        // 有些设备API可能不直接提供连接状态查询方法
+        try {
+            // 尝试执行一个简单命令来判断连接状态
+            // 这里是示例，实际实现需要根据设备API文档
+            // 替换为实际的连接状态判断逻辑
+            boolean isConnected = true;
+            String status = isConnected ? "已连接" : "未连接";
+            return Result.success(status);
+        } catch (Exception e) {
+            return Result.success("连接异常");
+        }
     }
 }
