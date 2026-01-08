@@ -143,11 +143,12 @@ public class UserServiceIml extends ServiceImpl<UserMapper, User>
                 .ne(User::getCompanyId, -1)
                 // 普通企业管理员只能看本公司
                 .eq(companyId != -1, User::getCompanyId, companyId)
-                // 后续还可加模糊查询
-                .like(StringUtils.isNotBlank(userQuery.getUsername()),
-                        User::getUsername, userQuery.getUsername())
-                .like(StringUtils.isNotBlank(userQuery.getCompanyName()),
-                        Company::getCompanyName, userQuery.getCompanyName())
+                // 4. 公司名查询（新条件）
+                .and(StringUtils.isNotBlank(userQuery.getCompanyName()),
+                        w -> w.like(Company::getCompanyName, userQuery.getCompanyName())
+                                .or().like(User::getUsername, userQuery.getCompanyName())
+                        // 后续还可加模糊查询
+                )
                 // 排序（可选，按 id 倒序）
                 .orderByDesc(User::getId);
     }

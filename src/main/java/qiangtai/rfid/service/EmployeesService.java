@@ -26,4 +26,6 @@ public interface EmployeesService extends IService<Employees> {
     Boolean updateEmployees(Employees employees1);
 
     Result<?> importExcel(List<Employees> successList);
+
+    List<EmployeesResultVO> listEmployees(EmployeesQuery employeesQuery);
 }
