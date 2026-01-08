@@ -17,6 +17,7 @@ public class DevicesUpdateVO {
      * 设备id
      */
     @Schema(description = "设备id")
+    @NotNull(message = "设备id不能为空")
     private Integer id;
 
     /**
