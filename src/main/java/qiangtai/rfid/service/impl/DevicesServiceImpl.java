@@ -8,7 +8,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
 import qiangtai.rfid.dto.req.DevicesSaveVO;
-import qiangtai.rfid.dto.result.Result;
+import qiangtai.rfid.dto.req.DevicesUpdateVO;
 import qiangtai.rfid.entity.Devices;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.service.DevicesService;
@@ -74,6 +74,11 @@ public class DevicesServiceImpl extends ServiceImpl<DevicesMapper, Devices>
             throw new BusinessException(10023, "不能删除非公司的设备");
         }
         return true;
+    }
+
+    @Override
+    public Boolean updateDevice(DevicesUpdateVO devicesUpdateVO) {
+        return this.updateById(BeanUtil.copyProperties(devicesUpdateVO, Devices.class));
     }
 }
 

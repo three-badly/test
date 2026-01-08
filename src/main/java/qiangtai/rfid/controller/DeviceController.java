@@ -7,12 +7,13 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DevicesQueryVO;
 import qiangtai.rfid.dto.req.DevicesSaveVO;
+import qiangtai.rfid.dto.req.DevicesUpdateVO;
 import qiangtai.rfid.dto.result.Result;
 import qiangtai.rfid.entity.Devices;
 import qiangtai.rfid.service.DevicesService;
+
 
 import javax.validation.Valid;
 import java.util.List;
@@ -37,8 +38,14 @@ public class DeviceController {
 
     @PostMapping("/add")
     @Operation(summary = "新增设备")
-    public Result<Boolean> add(@Valid  @RequestBody DevicesSaveVO devicesSaveVO) {
+    public Result<Boolean> add(@Valid @RequestBody DevicesSaveVO devicesSaveVO) {
         return Result.success(devicesService.add(devicesSaveVO));
+    }
+
+    @PutMapping("/update")
+    @Operation(summary = "修改设备")
+    public Result<Boolean> update(@Valid @RequestBody DevicesUpdateVO devicesUpdateVO) {
+        return Result.success(devicesService.updateDevice(devicesUpdateVO), "设备修改成功");
     }
 
     @GetMapping("/listDevice")

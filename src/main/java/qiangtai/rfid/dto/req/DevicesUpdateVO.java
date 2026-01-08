@@ -1,27 +1,21 @@
-package qiangtai.rfid.entity;
+package qiangtai.rfid.dto.req;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.time.LocalDateTime;
-
 import lombok.Data;
 import org.springframework.format.annotation.DateTimeFormat;
 
-/**
- * 门禁设备表
- * @TableName devices
- */
-@TableName(value ="devices")
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.Date;
+
 @Data
-public class Devices {
+public class DevicesUpdateVO {
     /**
      * 设备id
      */
-    @TableId(type = IdType.AUTO)
     @Schema(description = "设备id")
     private Integer id;
 
@@ -31,19 +25,23 @@ public class Devices {
     @Schema(description = "设备编号")
     private String deviceNo;
 
-
-
-    /**
-     * 设备名称 (如: 1号门进站口)
-     */
-    @Schema(description = "设备名称")
-    private String name;
     /**
      * 设备类型
      */
     @Schema(description = "设备类型")
     private String deviceType;
 
+    /**
+     * 设备名称 (如: 1号门进站口)
+     */
+    @Schema(description = "设备名称")
+    private String name;
+
+    /**
+     * 所属公司ID
+     */
+    @Schema(description = "所属公司ID")
+    private Integer companyId;
 
     /**
      * 所在位置
@@ -64,9 +62,4 @@ public class Devices {
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime lastHeartbeat;
-    /**
-     * 所属公司ID
-     */
-    @Schema(description = "所属公司ID")
-    private Integer companyId;
 }

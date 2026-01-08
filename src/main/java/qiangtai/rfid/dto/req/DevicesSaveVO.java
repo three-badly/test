@@ -2,9 +2,13 @@ package qiangtai.rfid.dto.req;
 
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import io.swagger.v3.oas.annotations.media.Schema;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -16,43 +20,48 @@ import javax.validation.constraints.NotNull;
  */
 @Data
 public class DevicesSaveVO {
+
     /**
-     * 设备序列号/编号
+     * 设备编号
      */
-    @TableId(type = IdType.AUTO)
-    @Schema(description = "设备ID")
-    private Integer id;
+    @Schema(description = "设备编号")
+    private String deviceNo;
+
+    /**
+     * 设备类型
+     */
+    @Schema(description = "设备类型")
+    private String deviceType;
 
     /**
      * 设备名称 (如: 1号门进站口)
      */
-    @NotEmpty(message = "设备名称不能为空")
     @Schema(description = "设备名称")
     private String name;
 
     /**
      * 所属公司ID
      */
-    @NotNull(message = "所属公司ID不能为空")
     @Schema(description = "所属公司ID")
     private Integer companyId;
 
     /**
-     * 安装位置
+     * 所在位置
      */
-    @NotEmpty(message = "安装位置不能为空")
-    @Schema(description = "安装位置")
+    @Schema(description = "所在位置")
     private String location;
 
     /**
-     * 设备状态
+     * 状态：正常/异常
      */
-    @Schema(description = "设备状态")
+    @Schema(description = "状态：正常/异常")
     private String status;
 
     /**
-     * 最后在线时间
+     * 最后在线
      */
     @Schema(description = "最后在线时间")
-    private Date lastHeartbeat;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    private LocalDateTime lastHeartbeat;
 }
