@@ -40,12 +40,10 @@ public class AccessLogsServiceImpl extends ServiceImpl<AccessLogsMapper, AccessL
 
     private final EmployeesMapper employeesMapper;
     private final DevicesMapper devicesMapper;
-    private final AccessLogsMapper accessLogsMapper;
 
-    public AccessLogsServiceImpl(EmployeesMapper employeesMapper, DevicesMapper devicesMapper, AccessLogsMapper accessLogsMapper) {
+    public AccessLogsServiceImpl(EmployeesMapper employeesMapper, DevicesMapper devicesMapper) {
         this.employeesMapper = employeesMapper;
         this.devicesMapper = devicesMapper;
-        this.accessLogsMapper = accessLogsMapper;
     }
 
     @Override
