@@ -45,11 +45,8 @@ public class EmployeesController {
     }
     @GetMapping("/listEmployees")
     @Operation(summary = "员工少,列表查看员工")
-    public Result<List<EmployeesResultVO>> listEmployees() {
-        Integer companyId = UserContext.get().getCompanyId();
-        List<Employees> list = employeesService.list(Wrappers.<Employees>lambdaQuery()
-                .eq(UserContext.get().getCompanyId() != -1,Employees::getCompanyId, companyId));
-        return Result.success(BeanUtil.copyToList(list, EmployeesResultVO.class));
+    public Result<List<EmployeesResultVO>> listEmployees(@ParameterObject EmployeesQuery employeesQuery) {
+        return Result.success(employeesService.listEmployees(employeesQuery));
     }
 
     @PostMapping("/add")
