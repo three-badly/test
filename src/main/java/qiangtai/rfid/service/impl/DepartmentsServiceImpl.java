@@ -2,18 +2,23 @@ package qiangtai.rfid.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.github.yulichang.wrapper.MPJLambdaWrapper;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.DepartmentQuery;
+import qiangtai.rfid.dto.req.DepartmentsResultVO;
 import qiangtai.rfid.dto.req.DepartmentsSaveVO;
+import qiangtai.rfid.entity.Company;
 import qiangtai.rfid.entity.Departments;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.service.DepartmentsService;
 import qiangtai.rfid.mapper.DepartmentsMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,16 +38,9 @@ public class DepartmentsServiceImpl extends ServiceImpl<DepartmentsMapper, Depar
     }
 
     @Override
-    public Page<Departments> pageDepartments(DepartmentQuery departmentQuery) {
-        Page<Departments> page = new Page<>(departmentQuery.getCurrent(), departmentQuery.getSize());
-        Integer companyId = UserContext.get().getCompanyId();
-        if (companyId == null){
-            throw new BusinessException(1020, "公司不存在");
-        }
-        if (companyId == -1){
-            return this.page(page, Wrappers.<Departments>emptyWrapper());
-        }
-        return this.page(page, Wrappers.<Departments>lambdaQuery().eq(Departments::getCompanyId, companyId));
+    public Page<DepartmentsResultVO> pageDepartments(DepartmentQuery departmentQuery) {
+        Page<DepartmentsResultVO> page = new Page<>(departmentQuery.getCurrent(), departmentQuery.getSize());
+        return lambdaQueryCondition(departmentQuery).page(page, DepartmentsResultVO.class);
     }
 
     @Override
@@ -57,7 +55,7 @@ public class DepartmentsServiceImpl extends ServiceImpl<DepartmentsMapper, Depar
                 .eq(Departments::getDepartmentName, departmentsSaveVO.getDepartmentName())) > 0){
             throw new BusinessException(1021, "部门名称重复");
         }
-        //存入当前线程公司id
+        //存入当前线程公司 id
         departmentsSaveVO.setCompanyId(companyId);
         departmentsSaveVO.setDeptCode(getDeptCode(companyId));
         return this.save(BeanUtil.copyProperties(departmentsSaveVO, Departments.class));
@@ -102,6 +100,24 @@ public class DepartmentsServiceImpl extends ServiceImpl<DepartmentsMapper, Depar
             throw new BusinessException(1022, "当前公司部门不存在");
         }
         return this.updateById(departments1);
+    }
+
+    @Override
+    public List<DepartmentsResultVO> listDepartments(DepartmentQuery departmentQuery) {
+        return lambdaQueryCondition(departmentQuery).list(DepartmentsResultVO.class);
+    }
+
+    public MPJLambdaWrapper<Departments> lambdaQueryCondition(DepartmentQuery qo) {
+        return new MPJLambdaWrapper<>(Departments.class)
+                .selectAll()
+                .select(Company::getCompanyName)
+                .leftJoin(Company.class, Company::getId, Departments::getCompanyId)
+                .like(StrUtil.isNotBlank(qo.getDepartmentName()), Departments::getDepartmentName, qo.getDepartmentName())
+                .like(StrUtil.isNotBlank(qo.getCompanyName()), Company::getCompanyName, qo.getCompanyName())
+                .like(StrUtil.isNotBlank(qo.getDeptCode()), Departments::getDeptCode, qo.getDeptCode())
+                .like(StrUtil.isNotBlank(qo.getDeptLeaderName()), Departments::getDeptLeaderName, qo.getDeptLeaderName())
+                //管理员可查看所有日志
+                .eq(UserContext.get().getCompanyId() != -1, Departments::getCompanyId, UserContext.get().getCompanyId());
     }
 }
 

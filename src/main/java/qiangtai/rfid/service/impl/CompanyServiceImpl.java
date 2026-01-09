@@ -13,10 +13,9 @@ import org.springframework.stereotype.Service;
 import qiangtai.rfid.context.UserContext;
 import qiangtai.rfid.dto.req.CompanyQuery;
 import qiangtai.rfid.dto.req.CompanySaveVO;
-import qiangtai.rfid.dto.req.DepartmentsSaveVO;
+import qiangtai.rfid.dto.rsp.CompanyNameId;
 import qiangtai.rfid.dto.rsp.CompanyResultVO;
 import qiangtai.rfid.entity.Company;
-import qiangtai.rfid.entity.User;
 import qiangtai.rfid.handler.exception.BusinessException;
 import qiangtai.rfid.mapper.CompanyMapper;
 import qiangtai.rfid.service.CompanyService;
@@ -32,9 +31,8 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     private final CompanyMapper companyMapper;
 
     @Override
-    public List<Company> getCompanyList() {
-        return companyMapper.selectList(Wrappers.<Company>lambdaQuery()
-                .eq(UserContext.get().getCompanyId() != -1, Company::getId, UserContext.get().getCompanyId()));
+    public List<CompanyNameId> getCompanyList(CompanyQuery companyQuery) {
+   return lambdaQueryCondition(companyQuery).list(CompanyNameId.class);
     }
 
     @Override
@@ -75,11 +73,15 @@ public class CompanyServiceImpl extends ServiceImpl<CompanyMapper, Company> impl
     public Page<CompanyResultVO> pageCompany(CompanyQuery companyQuery) {
         Page<CompanyResultVO> page = new Page<>(companyQuery.getCurrent(), companyQuery.getSize());
         //模糊查询
-      return new MPJLambdaWrapper<>(Company.class)
-                .like(StringUtils.isNotBlank(companyQuery.getCompanyName()),
-                        Company::getCompanyName, companyQuery.getCompanyName())
-                .eq(UserContext.get().getCompanyId() != -1, Company::getId, UserContext.get().getCompanyId())
+      return lambdaQueryCondition(companyQuery)
                 .page(page, CompanyResultVO.class);
 
+    }
+    public MPJLambdaWrapper<Company> lambdaQueryCondition(CompanyQuery qo) {
+        return new MPJLambdaWrapper<>(Company.class)
+                .selectAll()
+                .like(StringUtils.isNotBlank(qo.getCompanyName()), Company::getCompanyName, qo.getCompanyName())
+                //管理员可查看所有日志
+                .eq(UserContext.get().getCompanyId() != -1, Company::getId, UserContext.get().getCompanyId());
     }
 }

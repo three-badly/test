@@ -4,6 +4,7 @@ package qiangtai.rfid.service;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import qiangtai.rfid.dto.req.CompanyQuery;
 import qiangtai.rfid.dto.req.CompanySaveVO;
+import qiangtai.rfid.dto.rsp.CompanyNameId;
 import qiangtai.rfid.dto.rsp.CompanyResultVO;
 import qiangtai.rfid.entity.Company;
 
@@ -14,9 +15,10 @@ public interface CompanyService {
     
     /**
      * 获取公司列表
+     *
      * @return 公司列表
      */
-    List<Company> getCompanyList();
+    List<CompanyNameId> getCompanyList(CompanyQuery companyQuery);
 
     /**
      * 创建公司

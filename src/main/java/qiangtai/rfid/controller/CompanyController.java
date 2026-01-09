@@ -1,6 +1,5 @@
 package qiangtai.rfid.controller;
 
-import cn.hutool.core.bean.BeanUtil;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -33,9 +32,9 @@ public class CompanyController {
 
     @GetMapping("/getCompanyList")
     @Operation(summary = "获取公司列表")
-    public Result<List<CompanyNameId>> getCompanyList() {
-        List<Company> companies = companyService.getCompanyList();
-        return Result.success(BeanUtil.copyToList(companies, CompanyNameId.class));
+    public Result<List<CompanyNameId>> getCompanyList(CompanyQuery companyQuery) {
+
+        return Result.success( companyService.getCompanyList(companyQuery));
     }
     @GetMapping("/pageCompany")
     @Operation(summary = "分页展示公司")
