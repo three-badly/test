@@ -53,6 +53,7 @@ public class DevicesServiceImpl extends ServiceImpl<DevicesMapper, Devices>
         return devicesMapper.selectPage(page, eq);
     }
 
+
     @Override
     public Boolean add(DevicesSaveVO devicesSaveVO) {
         Devices devices = BeanUtil.copyProperties(devicesSaveVO, Devices.class);
