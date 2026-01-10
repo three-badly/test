@@ -1,6 +1,7 @@
 package qiangtai.rfid.controller;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.rscja.deviceapi.ConnectionState;
 import com.rscja.deviceapi.RFIDWithUHFNetworkA4;
 import com.rscja.deviceapi.entity.AntennaNameEnum;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,6 +22,7 @@ import qiangtai.rfid.service.DevicesService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * @author FEI
@@ -36,6 +38,7 @@ public class DeviceController {
     private final DevicesService devicesService;
     private final RFIDWithUHFNetworkA4 rfidInstance;
     private final RfidAutoConfig rfidConfig;
+
 
     @GetMapping("/pageDevice")
     @Operation(summary = "设备多,分页查看设备")
@@ -66,6 +69,7 @@ public class DeviceController {
     public Result<Boolean> deleteDevice(@PathVariable Integer id) {
         return Result.success(devicesService.deleteDevice(id), "删除成功");
     }
+
     @Operation(summary = "启动RFID连接")
     @PostMapping("/connect")
     public Result<Boolean> connect() {
@@ -113,16 +117,21 @@ public class DeviceController {
     @Operation(summary = "获取RFID连接状态")
     @GetMapping("/status")
     public Result<String> getStatus() {
-        // 注意：这里需要根据实际的API来判断连接状态
-        // 有些设备API可能不直接提供连接状态查询方法
         try {
-            // 尝试执行一个简单命令来判断连接状态
-            // 这里是示例，实际实现需要根据设备API文档
-            // 替换为实际的连接状态判断逻辑
-            boolean isConnected = true;
-            String status = isConnected ? "已连接" : "未连接";
-            return Result.success(status);
+            RFIDWithUHFNetworkA4 rfid = rfidConfig.rfidInstance();
+            ConnectionState status = rfid.getConnectStatus();   // 你的枚举
+            switch (status) {
+                case CONNECTED:
+                    return Result.success("已连接");
+                case CONNTCTING:          // 如果以后改拼写记得一起换
+                    return Result.success("连接中");
+                case DISCONNECTED:
+                    return Result.success("已断开");
+                default:
+                    return Result.success("未知状态");
+            }
         } catch (Exception e) {
+            log.error("获取 RFID 状态异常", e);
             return Result.success("连接异常");
         }
     }

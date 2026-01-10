@@ -38,6 +38,9 @@ mybatis-plus:
       update-strategy: not_empty
 # 打开 MyBatis SQL 日志
 logging:
+  charset:
+    console: UTF-8
+    file: UTF-8
   level:
     qiangtai.rfid.mapper: debug      # SQL
     qiangtai.rfid.service: info      # 业务

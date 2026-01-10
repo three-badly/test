@@ -5,11 +5,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 
 @SpringBootApplication
+@EnableScheduling          // ← 打开定时任务
+@EnableAsync
 public class RfidApplication {
 
     private static final Logger log = LoggerFactory.getLogger(RfidApplication.class);
@@ -22,6 +26,7 @@ public class RfidApplication {
         String hostAddress = InetAddress.getLocalHost().getHostAddress();
         log.info("本机地址:\thttp://{}:{}", hostAddress, port);
         log.info("接口地址:\thttp://{}:{}/doc.html", hostAddress, port);
+        log.info("日志地址:\thttp://{}:{}/log.html", hostAddress, port);
 
     }
 

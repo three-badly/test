@@ -80,9 +80,7 @@ public class TokenInterceptor implements HandlerInterceptor {
                                 Object handler,
                                 Exception ex) {
         // 请求结束务必清理，防止线程复用导致串号
-
         UserContext.clear();
-        log.warn("【TokenInterceptor】ThreadLocal 已清理");
     }
 
 }
