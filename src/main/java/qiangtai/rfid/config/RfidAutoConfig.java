@@ -69,7 +69,7 @@ public class RfidAutoConfig {
             }
         }
     }
-    /* ====== 生命周期 ====== */
+    /* ====== 生命周期 1====== */
     public void start() {
         // 1. 连接
         if (!rfid.init(host, port)) {
