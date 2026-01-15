@@ -42,7 +42,7 @@ public class RfidAutoConfig {
         CompletableFuture.runAsync(this::start);
     }
 
-    //半小时自动重连
+    //半小时自动重连1
     @Scheduled(fixedDelay = 1800_000)
     public void scheduledReconnect() {
         ConnectionState status = rfid.getConnectStatus();
