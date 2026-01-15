@@ -35,7 +35,7 @@ public class RfidAutoConfig {
     private final RFIDWithUHFNetworkA4 rfid = new RFIDWithUHFNetworkA4();
 
 
-    /* ========== 启动 ========== */
+    /* ========== 启动 11========== */
     @PostConstruct
     public void doStart() {
         // 后台去连，主线程立即返回
